@@ -1,12 +1,24 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import MenuSection from "@/components/MenuSection";
+import ReviewsSection from "@/components/ReviewsSection";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen">
+      <Navbar />
+      <main className="pt-20">
+        <Hero />
+        <MenuSection />
+        <ReviewsSection />
+        
+        <footer className="bg-card border-t py-8">
+          <div className="container mx-auto px-4 text-center text-muted-foreground">
+            <p className="font-serif text-lg mb-2">Le Gourmet Parisien</p>
+            <p className="text-sm">© 2025 - Tous droits réservés</p>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 };
