@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChefHat } from "lucide-react";
+import { ChefHat, Facebook, Instagram } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -15,9 +15,35 @@ const Navbar = () => {
           </Link>
           
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-foreground hover:text-primary transition-colors">
-              Accueil
-            </Link>
+            <a href="#menu" className="text-foreground hover:text-primary transition-colors hidden md:block">
+              Menu
+            </a>
+            <a href="#galerie" className="text-foreground hover:text-primary transition-colors hidden md:block">
+              Galerie
+            </a>
+            <a href="#contact" className="text-foreground hover:text-primary transition-colors hidden md:block">
+              Contact
+            </a>
+            <div className="flex items-center gap-3">
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-foreground hover:text-primary transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-5 w-5" />
+              </a>
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-foreground hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+            </div>
             <Link to="/admin">
               <Button variant="default" size="sm">
                 Administration
