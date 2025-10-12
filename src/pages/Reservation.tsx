@@ -1,0 +1,208 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const Reservation = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [date, setDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [numberOfGuests, setNumberOfGuests] = useState(2);
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const availableTimes = [
+    "12:00", "12:30", "13:00", "13:30",
+    "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!date || !selectedTime || !customerName || !customerEmail) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubmitting(true);
+
+    const { error } = await supabase.from("reservations").insert({
+      customer_name: customerName,
+      customer_email: customerEmail,
+      customer_phone: customerPhone || null,
+      reservation_date: format(date, "yyyy-MM-dd"),
+      reservation_time: selectedTime,
+      number_of_guests: numberOfGuests,
+      message: message || null,
+    });
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la réservation",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Réservation confirmée !",
+        description: "Nous avons bien reçu votre réservation",
+      });
+      navigate("/");
+    }
+
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-muted/30">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+            <span>Retour au site</span>
+          </Link>
+        </div>
+      </nav>
+
+      <div className="container mx-auto px-4 pt-24 pb-12">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4 text-primary">
+            Réserver une table
+          </h1>
+          <p className="text-center text-muted-foreground mb-12 text-lg">
+            Choisissez votre date et heure pour une expérience inoubliable
+          </p>
+
+          <form onSubmit={handleSubmit}>
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Sélectionner une date</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={(date) => date < new Date()}
+                    className="rounded-md border mx-auto"
+                    locale={fr}
+                  />
+                </CardContent>
+              </Card>
+
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Horaire</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-3 gap-2">
+                      {availableTimes.map((time) => (
+                        <Button
+                          key={time}
+                          type="button"
+                          variant={selectedTime === time ? "default" : "outline"}
+                          onClick={() => setSelectedTime(time)}
+                          className="w-full"
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Vos informations</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Nom complet *</label>
+                      <Input
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        placeholder="Jean Dupont"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Email *</label>
+                      <Input
+                        type="email"
+                        value={customerEmail}
+                        onChange={(e) => setCustomerEmail(e.target.value)}
+                        placeholder="jean.dupont@email.com"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Téléphone</label>
+                      <Input
+                        type="tel"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        placeholder="06 12 34 56 78"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Nombre de personnes</label>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="20"
+                        value={numberOfGuests}
+                        onChange={(e) => setNumberOfGuests(parseInt(e.target.value))}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Message (optionnel)</label>
+                      <Textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder="Allergies, régime spécial, occasion..."
+                        rows={3}
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={submitting || !date || !selectedTime}
+                    >
+                      {submitting ? "Réservation en cours..." : "Confirmer la réservation"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Reservation;

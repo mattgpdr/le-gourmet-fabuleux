@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
 import MenuSection from "@/components/MenuSection";
 import ServicesSection from "@/components/ServicesSection";
 import OpeningHoursSection from "@/components/OpeningHoursSection";
-import GallerySection from "@/components/GallerySection";
+import GalleryCarousel from "@/components/GalleryCarousel";
 import ReservationSection from "@/components/ReservationSection";
 import ReviewsSection from "@/components/ReviewsSection";
 import ContactSection from "@/components/ContactSection";
@@ -18,7 +19,7 @@ const Index = () => {
         <AboutSection />
         <OpeningHoursSection />
         <MenuSection />
-        <GallerySection />
+        <GalleryCarousel />
         <ServicesSection />
         <ReservationSection />
         <ReviewsSection />
@@ -47,7 +48,15 @@ const Index = () => {
               </div>
             </div>
             <div className="text-center pt-8 border-t text-muted-foreground">
-              <p className="text-sm">© 2025 Le Gourmet Parisien - Tous droits réservés</p>
+              <div className="flex items-center justify-center gap-4">
+                <p className="text-sm">© 2025 Le Gourmet Parisien - Tous droits réservés</p>
+                <Link 
+                  to="/admin" 
+                  className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+                >
+                  Admin
+                </Link>
+              </div>
             </div>
           </div>
         </footer>

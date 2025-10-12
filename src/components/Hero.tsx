@@ -1,11 +1,30 @@
+import { useState, useEffect } from "react";
 import heroImage from "@/assets/hero-restaurant.jpg";
 
 const Hero = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const opacity = Math.max(0, 1 - scrollY / 500);
+  const blur = Math.min(10, scrollY / 50);
+
   return (
     <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
       <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        className="absolute inset-0 bg-cover bg-center transition-all duration-300"
+        style={{ 
+          backgroundImage: `url(${heroImage})`,
+          opacity,
+          filter: `blur(${blur}px)`
+        }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-background" />
       </div>

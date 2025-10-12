@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      gallery_images: {
+        Row: {
+          alt_text: string | null
+          category: string
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+        }
+        Insert: {
+          alt_text?: string | null
+          category?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+        }
+        Update: {
+          alt_text?: string | null
+          category?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+        }
+        Relationships: []
+      }
       menu_categories: {
         Row: {
           created_at: string | null
@@ -82,6 +109,33 @@ export type Database = {
           },
         ]
       }
+      opening_hours: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_closed: boolean
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_closed?: boolean
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_closed?: boolean
+          start_time?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -97,6 +151,45 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      reservations: {
+        Row: {
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          message: string | null
+          number_of_guests: number
+          reservation_date: string
+          reservation_time: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          message?: string | null
+          number_of_guests?: number
+          reservation_date: string
+          reservation_time: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          message?: string | null
+          number_of_guests?: number
+          reservation_date?: string
+          reservation_time?: string
+          status?: string
         }
         Relationships: []
       }

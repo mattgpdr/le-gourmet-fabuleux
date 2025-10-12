@@ -44,11 +44,6 @@ const Navbar = () => {
                 <Instagram className="h-5 w-5" />
               </a>
             </div>
-            <Link to="/admin">
-              <Button variant="default" size="sm">
-                Administration
-              </Button>
-            </Link>
           </div>
         </div>
       </div>

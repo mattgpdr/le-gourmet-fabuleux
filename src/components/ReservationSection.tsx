@@ -41,9 +41,11 @@ const ReservationSection = () => {
               <p className="text-muted-foreground mb-6">
                 Utilisez notre système de réservation en ligne pratique
               </p>
-              <Button size="lg" variant="default" className="w-full">
-                <Calendar className="mr-2 h-5 w-5" />
-                Réserver maintenant
+              <Button size="lg" variant="default" className="w-full" asChild>
+                <a href="/reservation">
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Réserver maintenant
+                </a>
               </Button>
             </Card>
           </div>
