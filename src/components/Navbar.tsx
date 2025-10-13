@@ -60,10 +60,10 @@ const Navbar = () => {
               <img 
                 src={logoUrl} 
                 alt="Logo" 
-                className="h-8 w-8 object-contain transition-transform group-hover:scale-110"
+                className="h-12 w-12 object-contain transition-transform group-hover:scale-110"
               />
             ) : (
-              <ChefHat className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
+              <ChefHat className="h-12 w-12 text-primary transition-transform group-hover:scale-110" />
             )}
             <span className="text-2xl font-serif font-bold text-primary">
               Le Gourmet Parisien
