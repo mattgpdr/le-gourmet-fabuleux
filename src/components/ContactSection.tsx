@@ -107,15 +107,15 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" ref={ref} className={`py-16 bg-background transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+    <section id="contact" ref={ref} className={`py-12 md:py-16 bg-background transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-serif font-bold text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-serif font-bold text-center mb-8 md:mb-12">
           Nous contacter
         </h2>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
           <div>
-            <h3 className="text-2xl font-serif font-bold mb-6">
+            <h3 className="text-xl md:text-2xl font-serif font-bold mb-4 md:mb-6">
               Envoyez-nous un message
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -176,8 +176,8 @@ const ContactSection = () => {
             </form>
           </div>
 
-          <div className="space-y-6">
-            <h3 className="text-2xl font-serif font-bold mb-6">
+          <div className="space-y-4 md:space-y-6">
+            <h3 className="text-xl md:text-2xl font-serif font-bold mb-4 md:mb-6">
               Informations de contact
             </h3>
 

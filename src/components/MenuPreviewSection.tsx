@@ -30,30 +30,30 @@ const MenuPreviewSection = () => {
     <section 
       id="menu-preview"
       ref={ref}
-      className={`py-20 px-4 bg-gradient-to-b from-background to-muted/20 transition-all duration-700 ${
+      className={`py-12 md:py-20 px-4 bg-gradient-to-b from-background to-muted/20 transition-all duration-500 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}
     >
       <div className="container mx-auto max-w-4xl text-center">
-        <Card className="border-2 hover:border-primary/50 transition-all duration-500 hover:shadow-elegant group">
-          <CardContent className="p-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+        <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-elegant group">
+          <CardContent className="p-6 md:p-12">
+            <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 mb-4 md:mb-6 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
               {logoUrl ? (
                 <img 
                   src={logoUrl} 
                   alt="Logo" 
-                  className="h-10 w-10 object-contain transition-transform duration-300 group-hover:rotate-12"
+                  className="h-8 w-8 md:h-10 md:w-10 object-contain transition-transform duration-300 group-hover:rotate-12"
                 />
               ) : (
-                <ChefHat className="h-10 w-10 text-primary transition-transform duration-300 group-hover:rotate-12" />
+                <ChefHat className="h-8 w-8 md:h-10 md:w-10 text-primary transition-transform duration-300 group-hover:rotate-12" />
               )}
             </div>
             
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6 text-primary transition-all duration-300 group-hover:scale-105">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4 md:mb-6 text-primary transition-all duration-300 group-hover:scale-105">
               Notre Carte
             </h2>
             
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
               Découvrez notre cuisine française raffinée, élaborée avec des produits frais et de saison. 
               Une carte généreuse qui célèbre les saveurs authentiques et les traditions gastronomiques parisiennes.
             </p>
@@ -61,7 +61,7 @@ const MenuPreviewSection = () => {
             <Link to="/menu">
               <Button 
                 size="lg" 
-                className="hover-scale shadow-elegant transition-all duration-300 hover:shadow-glow"
+                className="hover-scale shadow-elegant transition-all duration-300 hover:shadow-glow w-full sm:w-auto"
               >
                 Voir le menu
                 <span className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-2">→</span>

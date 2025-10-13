@@ -117,37 +117,37 @@ const OpeningHoursSection = () => {
   const hours = groupedHours();
 
   return (
-    <section id="horaires" ref={ref} className={`py-16 bg-muted/30 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+    <section id="horaires" ref={ref} className={`py-12 md:py-16 bg-muted/30 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-8">
-            <Clock className="h-16 w-16 mx-auto mb-4 text-primary" />
-            <h2 className="text-4xl font-serif font-bold mb-4">
+          <div className="text-center mb-6 md:mb-8">
+            <Clock className="h-12 w-12 md:h-16 md:w-16 mx-auto mb-3 md:mb-4 text-primary" />
+            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-3 md:mb-4">
               Heures d'ouverture
             </h2>
             <Badge 
               variant={status.isOpen ? "default" : "secondary"}
-              className="text-lg px-6 py-2"
+              className="text-sm md:text-lg px-4 md:px-6 py-1.5 md:py-2"
             >
               {status.message}
             </Badge>
           </div>
 
-          <Card className="p-8">
-            <div className="space-y-4">
+          <Card className="p-4 md:p-8">
+            <div className="space-y-3 md:space-y-4">
               {hours.map((schedule, index) => (
                 <div 
                   key={index} 
-                  className="flex justify-between items-center py-3 border-b last:border-b-0"
+                  className="flex justify-between items-center py-2 md:py-3 border-b last:border-b-0 gap-4"
                 >
-                  <span className="font-semibold text-lg">{schedule.days}</span>
-                  <span className="text-lg text-primary font-medium">{schedule.time}</span>
+                  <span className="font-semibold text-sm md:text-base lg:text-lg">{schedule.days}</span>
+                  <span className="text-sm md:text-base lg:text-lg text-primary font-medium text-right">{schedule.time}</span>
                 </div>
               ))}
             </div>
           </Card>
 
-          <p className="text-center text-muted-foreground mt-6">
+          <p className="text-center text-xs md:text-sm text-muted-foreground mt-4 md:mt-6">
             Service continu toute la journée
           </p>
         </div>

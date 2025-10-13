@@ -113,48 +113,49 @@ const Reservation = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-muted/30 pt-24 pb-12">
+      <div className="min-h-screen bg-muted/30 pt-20 md:pt-24 pb-8 md:pb-12">
         <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4 text-primary">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-center mb-3 md:mb-4 text-primary">
             Réserver une table
           </h1>
-          <p className="text-center text-muted-foreground mb-12 text-lg">
+          <p className="text-sm md:text-base lg:text-lg text-center text-muted-foreground mb-8 md:mb-12 px-2">
             Choisissez votre date et heure pour une expérience inoubliable
           </p>
 
           <form onSubmit={handleSubmit}>
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-8">
               <Card>
-                <CardHeader>
-                  <CardTitle>Sélectionner une date</CardTitle>
+                <CardHeader className="p-4 md:p-6">
+                  <CardTitle className="text-lg md:text-xl">Sélectionner une date</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
                   <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
                     disabled={(date) => date < new Date()}
-                    className="rounded-md border mx-auto"
+                    className="rounded-md border mx-auto w-full"
                     locale={fr}
                   />
                 </CardContent>
               </Card>
 
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Horaire</CardTitle>
+                  <CardHeader className="p-4 md:p-6">
+                    <CardTitle className="text-lg md:text-xl">Horaire</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
                     <div className="grid grid-cols-3 gap-2">
                       {availableTimes.map((time) => (
                         <Button
                           key={time}
                           type="button"
+                          size="sm"
                           variant={selectedTime === time ? "default" : "outline"}
                           onClick={() => setSelectedTime(time)}
-                          className="w-full"
+                          className="w-full text-xs md:text-sm"
                         >
                           {time}
                         </Button>
@@ -164,10 +165,10 @@ const Reservation = () => {
                 </Card>
 
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Vos informations</CardTitle>
+                  <CardHeader className="p-4 md:p-6">
+                    <CardTitle className="text-lg md:text-xl">Vos informations</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0 md:pt-0">
                     <div>
                       <label className="block text-sm font-medium mb-2">Nom complet *</label>
                       <Input

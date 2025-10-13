@@ -52,12 +52,12 @@ const GalleryCarousel = () => {
     <section 
       id="galerie" 
       ref={ref} 
-      className={`py-16 bg-background transition-all duration-700 ${
+      className={`py-12 md:py-16 bg-background transition-all duration-500 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}
     >
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-serif font-bold text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-serif font-bold text-center mb-8 md:mb-12">
           Galerie
         </h2>
 
@@ -65,37 +65,43 @@ const GalleryCarousel = () => {
           opts={{
             align: "start",
             loop: true,
+            dragFree: false,
+            skipSnaps: false,
           }}
           plugins={[
             Autoplay({
-              delay: 3000,
+              delay: 4500,
+              stopOnInteraction: false,
+              stopOnMouseEnter: true,
             }),
           ]}
           className="w-full max-w-6xl mx-auto"
         >
-          <CarouselContent>
+          <CarouselContent className="-ml-2 md:-ml-4">
             {images.map((image) => (
-              <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
-                <div className="p-2">
+              <CarouselItem key={image.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
                   <div 
                     className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer"
                     onClick={() => setSelectedImage(image)}
                   >
                     <img
-                      src={image.image_url}
+                      src={`${image.image_url}${image.image_url.includes('unsplash') ? '&fm=webp&q=80' : ''}`}
                       alt={image.alt_text || "Gallery image"}
-                      className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <span className="text-white font-medium">Agrandir</span>
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                      <span className="text-white font-medium text-sm md:text-base">Agrandir</span>
                     </div>
                   </div>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="left-2" />
-          <CarouselNext className="right-2" />
+          <CarouselPrevious className="left-1 md:left-2 h-8 w-8 md:h-10 md:w-10" />
+          <CarouselNext className="right-1 md:right-2 h-8 w-8 md:h-10 md:w-10" />
         </Carousel>
 
         <ImageLightbox

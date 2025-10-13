@@ -103,27 +103,27 @@ const ReviewsSection = () => {
   };
 
   return (
-    <section id="avis" ref={ref} className={`py-20 px-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+    <section id="avis" ref={ref} className={`py-12 md:py-20 px-4 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto max-w-6xl">
-        <h2 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4 text-primary">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-center mb-3 md:mb-4 text-primary">
           Avis de nos clients
         </h2>
-        <p className="text-center text-muted-foreground mb-16 text-lg">
+        <p className="text-sm md:text-base lg:text-lg text-center text-muted-foreground mb-10 md:mb-16 px-2">
           Découvrez ce que nos clients pensent de nous
         </p>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-10 md:mb-16">
           {reviews.map((review) => (
             <Card 
               key={review.id}
               className="hover:shadow-elegant transition-all duration-300"
             >
-              <CardContent className="p-6">
-                <div className="flex gap-1 mb-3">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex gap-1 mb-2 md:mb-3">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
-                      className={`h-5 w-5 ${
+                      className={`h-4 w-4 md:h-5 md:w-5 ${
                         i < review.rating
                           ? "fill-secondary text-secondary"
                           : "text-muted"
@@ -131,10 +131,10 @@ const ReviewsSection = () => {
                     />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-4 italic">
+                <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4 italic">
                   "{review.comment}"
                 </p>
-                <p className="font-semibold text-foreground">
+                <p className="text-sm md:text-base font-semibold text-foreground">
                   — {review.author_name}
                 </p>
               </CardContent>
@@ -143,11 +143,11 @@ const ReviewsSection = () => {
         </div>
 
         <Card className="max-w-2xl mx-auto shadow-elegant">
-          <CardContent className="p-8">
-            <h3 className="text-2xl font-serif font-semibold mb-6 text-center">
+          <CardContent className="p-4 md:p-8">
+            <h3 className="text-xl md:text-2xl font-serif font-semibold mb-4 md:mb-6 text-center">
               Laissez votre avis
             </h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Votre nom</label>
                 <Input

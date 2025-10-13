@@ -53,7 +53,7 @@ const Hero = () => {
   return (
     <section 
       ref={ref} 
-      className={`relative h-[70vh] flex items-center justify-center overflow-hidden transition-all duration-700 ${
+      className={`relative min-h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden transition-all duration-500 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
@@ -69,19 +69,19 @@ const Hero = () => {
       </div>
       
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 animate-fade-in">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-4 md:mb-6 animate-fade-in leading-tight">
           {heroTitle}
         </h1>
-        <p className="text-xl md:text-2xl text-white/90 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 md:mb-8 animate-fade-in px-2" style={{ animationDelay: "0.2s" }}>
           {heroDescription}
         </p>
-        <div className="flex gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.4s" }}>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-fade-in max-w-md mx-auto sm:max-w-none" style={{ animationDelay: "0.4s" }}>
           <button 
             onClick={() => {
               const element = document.getElementById("menu-preview");
               element?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-8 py-3 bg-primary text-white rounded-lg font-medium hover:scale-105 transition-transform shadow-elegant"
+            className="px-6 sm:px-8 py-2.5 sm:py-3 bg-primary text-white rounded-lg font-medium hover:scale-105 transition-transform shadow-elegant text-sm sm:text-base"
           >
             Découvrir le menu
           </button>
@@ -90,7 +90,7 @@ const Hero = () => {
               const element = document.getElementById("avis");
               element?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-8 py-3 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-lg font-medium hover:bg-white/20 transition-colors"
+            className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-lg font-medium hover:bg-white/20 transition-colors text-sm sm:text-base"
           >
             Nos avis
           </button>

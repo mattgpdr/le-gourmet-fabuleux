@@ -35,40 +35,40 @@ const Footer = () => {
 
   return (
     <footer className="bg-muted/50 border-t">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-xl font-serif font-bold mb-4">{settings.footer_name}</h3>
-            <p className="text-muted-foreground">
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="text-center md:text-left">
+            <h3 className="text-lg md:text-xl font-serif font-bold mb-3 md:mb-4">{settings.footer_name}</h3>
+            <p className="text-sm md:text-base text-muted-foreground">
               {settings.footer_description}
             </p>
           </div>
 
-          <div>
-            <h4 className="font-semibold mb-4">Contact</h4>
+          <div className="text-center md:text-left">
+            <h4 className="font-semibold mb-3 md:mb-4">Contact</h4>
             <div className="space-y-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <a href={`tel:${settings.phone}`} className="hover:text-primary">
+              <div className="flex items-center gap-2 justify-center md:justify-start">
+                <Phone className="h-4 w-4 flex-shrink-0" />
+                <a href={`tel:${settings.phone}`} className="hover:text-primary break-all">
                   {settings.phone}
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                <a href={`mailto:${settings.email}`} className="hover:text-primary">
+              <div className="flex items-center gap-2 justify-center md:justify-start">
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <a href={`mailto:${settings.email}`} className="hover:text-primary break-all">
                   {settings.email}
                 </a>
               </div>
-              <div className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 mt-1" />
-                <span>{settings.address}</span>
+              <div className="flex items-start gap-2 justify-center md:justify-start">
+                <MapPin className="h-4 w-4 mt-1 flex-shrink-0" />
+                <span className="text-left">{settings.address}</span>
               </div>
             </div>
           </div>
 
-          <div>
-            <h4 className="font-semibold mb-4">Suivez-nous</h4>
-            <div className="flex gap-4">
+          <div className="text-center md:text-left">
+            <h4 className="font-semibold mb-3 md:mb-4">Suivez-nous</h4>
+            <div className="flex gap-4 justify-center md:justify-start">
               <a
                 href={settings.facebook_url}
                 target="_blank"
@@ -89,7 +89,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+        <div className="border-t mt-6 md:mt-8 pt-6 md:pt-8 text-center text-xs md:text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Le Gourmet Fabuleux. Tous droits réservés.</p>
         </div>
       </div>

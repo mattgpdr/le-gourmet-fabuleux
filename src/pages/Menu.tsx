@@ -62,20 +62,20 @@ const Menu = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="pt-24 pb-16">
+      <main className="pt-20 md:pt-24 pb-12 md:pb-16">
         <div className="container mx-auto px-4">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <Link to="/">
-              <Button variant="ghost" className="mb-4">
+              <Button variant="ghost" size="sm" className="mb-3 md:mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Retour à l'accueil
               </Button>
             </Link>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-center mb-4">
+            <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-3 md:mb-4">
               Notre Menu
             </h1>
-            <p className="text-center text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-center text-muted-foreground max-w-2xl mx-auto px-2">
               Découvrez notre sélection de plats raffinés, préparés avec passion
               par notre chef et son équipe.
             </p>
@@ -96,7 +96,7 @@ const Menu = () => {
               ))}
             </div>
           ) : (
-            <div className="space-y-12">
+            <div className="space-y-8 md:space-y-12">
               {categories.map((category) => {
                 const items = menuItems.filter(
                   (item) => item.category_id === category.id
@@ -106,25 +106,25 @@ const Menu = () => {
 
                 return (
                   <div key={category.id}>
-                    <h2 className="font-serif text-3xl font-bold mb-6 text-primary">
+                    <h2 className="font-serif text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-primary">
                       {category.name}
                     </h2>
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
                       {items.map((item) => (
                         <Card 
                           key={item.id} 
-                          className="hover-scale cursor-pointer transition-all hover:shadow-lg"
+                          className="hover-scale cursor-pointer transition-all hover:shadow-lg active:scale-95"
                           onClick={() => setSelectedItem(item)}
                         >
-                          <CardHeader>
-                            <div className="flex justify-between items-start">
-                              <CardTitle className="text-xl">{item.name}</CardTitle>
-                              <span className="text-primary font-bold text-lg">
+                          <CardHeader className="p-4 md:p-6">
+                            <div className="flex justify-between items-start gap-2">
+                              <CardTitle className="text-base md:text-xl">{item.name}</CardTitle>
+                              <span className="text-primary font-bold text-base md:text-lg flex-shrink-0">
                                 {item.price.toFixed(2)} €
                               </span>
                             </div>
                             {item.description && (
-                              <CardDescription>{item.description}</CardDescription>
+                              <CardDescription className="text-xs md:text-sm">{item.description}</CardDescription>
                             )}
                           </CardHeader>
                         </Card>
@@ -137,9 +137,9 @@ const Menu = () => {
           )}
 
           {/* CTA Réserver */}
-          <div className="text-center mt-16">
+          <div className="text-center mt-12 md:mt-16">
             <Link to="/reservation">
-              <Button size="lg" className="text-lg px-8">
+              <Button size="lg" className="text-base md:text-lg px-6 md:px-8 w-full sm:w-auto">
                 Réserver une table
               </Button>
             </Link>
