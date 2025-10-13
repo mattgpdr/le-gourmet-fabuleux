@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import heroImageDefault from "@/assets/hero-restaurant.jpg";
 
 const Hero = () => {
+  const { ref, isVisible } = useScrollAnimation();
   const [scrollY, setScrollY] = useState(0);
   const [heroImage, setHeroImage] = useState(heroImageDefault);
 
@@ -35,7 +37,12 @@ const Hero = () => {
   const blur = Math.min(10, scrollY / 50);
 
   return (
-    <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+    <section 
+      ref={ref} 
+      className={`relative h-[70vh] flex items-center justify-center overflow-hidden transition-all duration-700 ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       <div 
         className="absolute inset-0 bg-cover bg-center transition-all duration-300"
         style={{ 

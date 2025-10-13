@@ -8,6 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import ImageLightbox from "./ImageLightbox";
 
 interface GalleryImage {
@@ -17,6 +18,7 @@ interface GalleryImage {
 }
 
 const GalleryCarousel = () => {
+  const { ref, isVisible } = useScrollAnimation();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
@@ -47,7 +49,13 @@ const GalleryCarousel = () => {
   };
 
   return (
-    <section id="galerie" className="py-16 bg-background animate-fade-in">
+    <section 
+      id="galerie" 
+      ref={ref} 
+      className={`py-16 bg-background transition-all duration-700 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+      }`}
+    >
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-serif font-bold text-center mb-12">
           Galerie
