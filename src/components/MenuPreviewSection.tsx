@@ -41,10 +41,10 @@ const MenuPreviewSection = () => {
                 <img 
                   src={logoUrl} 
                   alt="Logo" 
-                  className="h-8 w-8 object-contain transition-transform duration-300 group-hover:rotate-12"
+                  className="h-10 w-10 object-contain transition-transform duration-300 group-hover:rotate-12"
                 />
               ) : (
-                <ChefHat className="h-8 w-8 text-primary transition-transform duration-300 group-hover:rotate-12" />
+                <ChefHat className="h-10 w-10 text-primary transition-transform duration-300 group-hover:rotate-12" />
               )}
             </div>
             
