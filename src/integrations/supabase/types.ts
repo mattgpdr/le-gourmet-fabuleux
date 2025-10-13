@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_read: boolean
+          message: string
+          name: string
+          phone: string | null
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_read?: boolean
+          message: string
+          name: string
+          phone?: string | null
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          name?: string
+          phone?: string | null
+          subject?: string
+        }
+        Relationships: []
+      }
+      faq_items: {
+        Row: {
+          answer: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          question: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          question: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          question?: string
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           alt_text: string | null
@@ -22,6 +82,7 @@ export type Database = {
           display_order: number
           id: string
           image_url: string
+          is_visible: boolean
         }
         Insert: {
           alt_text?: string | null
@@ -30,6 +91,7 @@ export type Database = {
           display_order?: number
           id?: string
           image_url: string
+          is_visible?: boolean
         }
         Update: {
           alt_text?: string | null
@@ -38,6 +100,7 @@ export type Database = {
           display_order?: number
           id?: string
           image_url?: string
+          is_visible?: boolean
         }
         Relationships: []
       }
@@ -161,6 +224,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           id: string
+          is_viewed: boolean
           message: string | null
           number_of_guests: number
           reservation_date: string
@@ -173,6 +237,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           id?: string
+          is_viewed?: boolean
           message?: string | null
           number_of_guests?: number
           reservation_date: string
@@ -185,6 +250,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           id?: string
+          is_viewed?: boolean
           message?: string | null
           number_of_guests?: number
           reservation_date?: string
@@ -214,6 +280,27 @@ export type Database = {
           created_at?: string | null
           id?: string
           rating?: number
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string
         }
         Relationships: []
       }

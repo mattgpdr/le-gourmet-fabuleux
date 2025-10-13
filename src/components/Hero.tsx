@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import heroImage from "@/assets/hero-restaurant.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import heroImageDefault from "@/assets/hero-restaurant.jpg";
 
 const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
+  const [heroImage, setHeroImage] = useState(heroImageDefault);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -12,6 +14,22 @@ const Hero = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    fetchHeroImage();
+  }, []);
+
+  const fetchHeroImage = async () => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "hero_image_url")
+      .single();
+    
+    if (data?.value && data.value.startsWith("http")) {
+      setHeroImage(data.value);
+    }
+  };
 
   const opacity = Math.max(0, 1 - scrollY / 500);
   const blur = Math.min(10, scrollY / 50);

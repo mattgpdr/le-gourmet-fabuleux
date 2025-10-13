@@ -5,6 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
+  email: z.string().trim().email("Email invalide").max(255),
+  phone: z.string().trim().max(20).optional().or(z.literal("")),
+  subject: z.string().trim().min(3, "Le sujet doit contenir au moins 3 caractères").max(200),
+  message: z.string().trim().min(10, "Le message doit contenir au moins 10 caractères").max(1000),
+});
 
 const ContactSection = () => {
   const { toast } = useToast();
@@ -21,16 +31,44 @@ const ContactSection = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    // Simulation d'envoi
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const validatedData = contactSchema.parse(formData);
 
-    toast({
-      title: "Message envoyé !",
-      description: "Nous vous répondrons dans les plus brefs délais.",
-    });
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert([{
+          name: validatedData.name,
+          email: validatedData.email,
+          phone: validatedData.phone || null,
+          subject: validatedData.subject,
+          message: validatedData.message,
+        }]);
 
-    setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    setSubmitting(false);
+      if (error) throw error;
+
+      toast({
+        title: "Message envoyé !",
+        description: "Nous vous répondrons dans les plus brefs délais.",
+      });
+
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          variant: "destructive",
+          title: "Erreur de validation",
+          description: error.errors[0].message,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible d'envoyer le message. Veuillez réessayer.",
+        });
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (

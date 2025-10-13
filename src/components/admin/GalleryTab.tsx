@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Trash2, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface GalleryImage {
   id: string;
@@ -12,6 +11,7 @@ interface GalleryImage {
   alt_text: string | null;
   category: string;
   display_order: number;
+  is_visible: boolean;
 }
 
 const GalleryTab = () => {
@@ -47,17 +47,16 @@ const GalleryTab = () => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('gallery')
-        .upload(filePath, file);
+        .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
         .from('gallery')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       const { error: dbError } = await supabase
         .from('gallery_images')
@@ -87,18 +86,32 @@ const GalleryTab = () => {
     }
   };
 
+  const handleToggleVisibility = async (id: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from("gallery_images")
+      .update({ is_visible: !currentStatus })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de mettre à jour la visibilité",
+      });
+    } else {
+      fetchImages();
+    }
+  };
+
   const handleDelete = async (id: string, imageUrl: string) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cette image ?")) return;
 
     try {
-      // Extract file path from URL
       const urlParts = imageUrl.split('/');
       const filePath = urlParts[urlParts.length - 1];
 
-      // Delete from storage
       await supabase.storage.from('gallery').remove([filePath]);
 
-      // Delete from database
       const { error } = await supabase
         .from('gallery_images')
         .delete()
@@ -108,7 +121,6 @@ const GalleryTab = () => {
 
       toast({
         title: "Image supprimée",
-        description: "L'image a été supprimée de la galerie",
       });
 
       fetchImages();
@@ -127,46 +139,52 @@ const GalleryTab = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-serif font-bold">Galerie d'images</h2>
-        <div>
-          <Input
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-serif font-bold">Galerie</h2>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-muted-foreground">
+            {images.filter(img => img.is_visible).length} / {images.length} visible(s)
+          </span>
+          <Button onClick={() => document.getElementById("upload-input")?.click()} disabled={uploading}>
+            <Upload className="mr-2 h-4 w-4" />
+            {uploading ? "Envoi..." : "Ajouter"}
+          </Button>
+          <input
+            id="upload-input"
             type="file"
             accept="image/*"
             onChange={handleUpload}
-            disabled={uploading}
             className="hidden"
-            id="image-upload"
           />
-          <Button asChild disabled={uploading}>
-            <label htmlFor="image-upload" className="cursor-pointer">
-              <Upload className="h-4 w-4 mr-2" />
-              {uploading ? "Upload en cours..." : "Ajouter une image"}
-            </label>
-          </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {images.map((image) => (
-          <Card key={image.id} className="overflow-hidden">
-            <CardContent className="p-0 relative group">
-              <img
-                src={image.image_url}
-                alt={image.alt_text || "Gallery image"}
-                className="w-full h-48 object-cover"
-              />
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(image.id, image.image_url)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+          <div key={image.id} className="relative group">
+            <img
+              src={image.image_url}
+              alt={image.alt_text || "Gallery"}
+              className="w-full h-48 object-cover rounded-lg"
+            />
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col items-center justify-center gap-2">
+              <div className="flex items-center gap-2 bg-background/90 px-3 py-1 rounded-full">
+                <Checkbox
+                  checked={image.is_visible}
+                  onCheckedChange={() => handleToggleVisibility(image.id, image.is_visible)}
+                />
+                <span className="text-xs">{image.is_visible ? "Visible" : "Masqué"}</span>
               </div>
-            </CardContent>
-          </Card>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => handleDelete(image.id, image.image_url)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Supprimer
+              </Button>
+            </div>
+          </div>
         ))}
       </div>
     </div>

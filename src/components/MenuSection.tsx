@@ -61,11 +61,19 @@ const MenuSection = () => {
     <section id="menu" className="py-20 px-4 bg-muted/30">
       <div className="container mx-auto max-w-5xl">
         <h2 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4 text-primary">
-          Notre Menu
+          Nos Menus
         </h2>
-        <p className="text-center text-muted-foreground mb-16 text-lg">
-          Des plats raffinés préparés avec passion
+        <p className="text-center text-muted-foreground mb-6 text-lg max-w-2xl mx-auto">
+          Découvrez notre sélection de plats raffinés, élaborés avec des produits frais et de saison. 
+          Chaque création est le fruit d'un savoir-faire unique et d'une passion pour la gastronomie française.
         </p>
+        <div className="text-center mb-16">
+          <a href="/menu">
+            <button className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:scale-105 transition-transform shadow-elegant">
+              Notre menu complet
+            </button>
+          </a>
+        </div>
 
         <div className="space-y-16">
           {categories.map((category) => {

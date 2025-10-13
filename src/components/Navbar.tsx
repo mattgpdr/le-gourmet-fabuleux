@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { ChefHat, Facebook, Instagram } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
+  const scrollToReservation = () => {
+    const element = document.getElementById("reservation");
+    element?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
       <div className="container mx-auto px-4 py-4">
@@ -15,15 +20,19 @@ const Navbar = () => {
           </Link>
           
           <div className="flex items-center gap-6">
-            <a href="#menu" className="text-foreground hover:text-primary transition-colors hidden md:block">
-              Menu
-            </a>
-            <a href="#galerie" className="text-foreground hover:text-primary transition-colors hidden md:block">
-              Galerie
-            </a>
+            <Link to="/menu" className="text-foreground hover:text-primary transition-colors hidden md:block">
+              Notre menu
+            </Link>
+            <button
+              onClick={scrollToReservation}
+              className="text-foreground hover:text-primary transition-colors hidden md:block"
+            >
+              Réserver
+            </button>
             <a href="#contact" className="text-foreground hover:text-primary transition-colors hidden md:block">
-              Contact
+              Localisation
             </a>
+            <ThemeToggle />
             <div className="flex items-center gap-3">
               <a 
                 href="https://facebook.com" 

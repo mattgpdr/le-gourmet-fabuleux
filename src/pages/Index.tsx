@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import AboutSection from "@/components/AboutSection";
-import MenuSection from "@/components/MenuSection";
-import ServicesSection from "@/components/ServicesSection";
-import OpeningHoursSection from "@/components/OpeningHoursSection";
 import GalleryCarousel from "@/components/GalleryCarousel";
+import MenuSection from "@/components/MenuSection";
+import OpeningHoursSection from "@/components/OpeningHoursSection";
 import ReservationSection from "@/components/ReservationSection";
 import ReviewsSection from "@/components/ReviewsSection";
 import ContactSection from "@/components/ContactSection";
+import ChatWidget from "@/components/ChatWidget";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const Index = () => {
   return (
@@ -16,14 +16,13 @@ const Index = () => {
       <Navbar />
       <main className="pt-20">
         <Hero />
-        <AboutSection />
-        <OpeningHoursSection />
-        <MenuSection />
         <GalleryCarousel />
-        <ServicesSection />
+        <MenuSection />
+        <OpeningHoursSection />
         <ReservationSection />
         <ReviewsSection />
         <ContactSection />
+        <ChatWidget />
         
         <footer className="bg-card border-t py-12">
           <div className="container mx-auto px-4">
