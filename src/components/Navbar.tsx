@@ -1,11 +1,31 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChefHat, Facebook, Instagram } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
-  const scrollToReservation = () => {
-    const element = document.getElementById("reservation");
-    element?.scrollIntoView({ behavior: "smooth" });
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleReservationClick = () => {
+    if (location.pathname === "/") {
+      const element = document.getElementById("reservation");
+      element?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/reservation");
+    }
+  };
+
+  const handleContactClick = () => {
+    if (location.pathname === "/") {
+      const element = document.getElementById("contact");
+      element?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById("contact");
+        element?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
   };
 
   return (
@@ -24,14 +44,17 @@ const Navbar = () => {
               Notre menu
             </Link>
             <button
-              onClick={scrollToReservation}
+              onClick={handleReservationClick}
               className="text-foreground hover:text-primary transition-colors hidden md:block"
             >
               Réserver
             </button>
-            <a href="#contact" className="text-foreground hover:text-primary transition-colors hidden md:block">
+            <button
+              onClick={handleContactClick}
+              className="text-foreground hover:text-primary transition-colors hidden md:block"
+            >
               Localisation
-            </a>
+            </button>
             <ThemeToggle />
             <div className="flex items-center gap-3">
               <a 
