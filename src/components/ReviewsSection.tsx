@@ -160,7 +160,7 @@ const ReviewsSection = () => {
 
               <div>
                 <label className="block text-sm font-medium mb-2">Note</label>
-                <div className="flex gap-2">
+                <div className="flex gap-1.5">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <button
                       key={i}
@@ -169,7 +169,7 @@ const ReviewsSection = () => {
                       className="transition-transform hover:scale-110"
                     >
                       <Star
-                        className={`h-8 w-8 ${
+                        className={`h-6 w-6 ${
                           i < rating
                             ? "fill-secondary text-secondary"
                             : "text-muted"
