@@ -1,11 +1,30 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChefHat } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const MenuPreviewSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const [logoUrl, setLogoUrl] = useState<string>("");
+
+  useEffect(() => {
+    fetchLogo();
+  }, []);
+
+  const fetchLogo = async () => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "logo_url")
+      .single();
+    
+    if (data?.value) {
+      setLogoUrl(data.value);
+    }
+  };
 
   return (
     <section 
@@ -18,7 +37,15 @@ const MenuPreviewSection = () => {
         <Card className="border-2 hover:border-primary/50 transition-all duration-500 hover:shadow-elegant group">
           <CardContent className="p-12">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
-              <ChefHat className="h-8 w-8 text-primary transition-transform duration-300 group-hover:rotate-12" />
+              {logoUrl ? (
+                <img 
+                  src={logoUrl} 
+                  alt="Logo" 
+                  className="h-8 w-8 object-contain transition-transform duration-300 group-hover:rotate-12"
+                />
+              ) : (
+                <ChefHat className="h-8 w-8 text-primary transition-transform duration-300 group-hover:rotate-12" />
+              )}
             </div>
             
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6 text-primary transition-all duration-300 group-hover:scale-105">
