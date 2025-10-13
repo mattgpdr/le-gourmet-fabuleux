@@ -131,6 +131,7 @@ export type Database = {
           category_id: string
           created_at: string | null
           description: string | null
+          detailed_description: string | null
           display_order: number
           id: string
           image_url: string | null
@@ -143,6 +144,7 @@ export type Database = {
           category_id: string
           created_at?: string | null
           description?: string | null
+          detailed_description?: string | null
           display_order?: number
           id?: string
           image_url?: string | null
@@ -155,6 +157,7 @@ export type Database = {
           category_id?: string
           created_at?: string | null
           description?: string | null
+          detailed_description?: string | null
           display_order?: number
           id?: string
           image_url?: string | null
@@ -265,6 +268,7 @@ export type Database = {
           comment: string
           created_at: string | null
           id: string
+          is_confirmed: boolean
           rating: number
         }
         Insert: {
@@ -272,6 +276,7 @@ export type Database = {
           comment: string
           created_at?: string | null
           id?: string
+          is_confirmed?: boolean
           rating: number
         }
         Update: {
@@ -279,6 +284,7 @@ export type Database = {
           comment?: string
           created_at?: string | null
           id?: string
+          is_confirmed?: boolean
           rating?: number
         }
         Relationships: []

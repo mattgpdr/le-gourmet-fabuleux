@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Trash2, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -10,6 +11,7 @@ interface Review {
   author_name: string;
   rating: number;
   comment: string;
+  is_confirmed: boolean;
   created_at: string;
 }
 
@@ -34,6 +36,27 @@ const ReviewsTab = () => {
       setReviews(data);
     }
     setLoading(false);
+  };
+
+  const handleToggleConfirm = async (id: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from("reviews")
+      .update({ is_confirmed: !currentStatus })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de mettre à jour l'avis",
+      });
+    } else {
+      fetchReviews();
+      toast({
+        title: "Avis mis à jour",
+        description: "Le statut de l'avis a été modifié",
+      });
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -75,27 +98,39 @@ const ReviewsTab = () => {
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {reviews.map((review) => (
-            <Card key={review.id}>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <div className="flex gap-1 mb-2">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < review.rating
-                              ? "fill-secondary text-secondary"
-                              : "text-muted"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <p className="font-semibold">{review.author_name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(review.created_at).toLocaleDateString("fr-FR")}
-                    </p>
+            <Card key={review.id} className={review.is_confirmed ? "border-green-500" : ""}>
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-lg">{review.author_name}</CardTitle>
+                    {review.is_confirmed && (
+                      <Badge variant="default" className="text-xs">Confirmé</Badge>
+                    )}
                   </div>
+                  <div className="flex gap-1 mt-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${
+                          i < review.rating
+                            ? "fill-primary text-primary"
+                            : "text-muted-foreground"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {new Date(review.created_at).toLocaleDateString("fr-FR")}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={review.is_confirmed ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => handleToggleConfirm(review.id, review.is_confirmed)}
+                  >
+                    {review.is_confirmed ? "Annuler" : "Confirmer"}
+                  </Button>
                   <Button
                     variant="destructive"
                     size="sm"
@@ -104,6 +139,8 @@ const ReviewsTab = () => {
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
+              </CardHeader>
+              <CardContent>
                 <p className="text-muted-foreground italic">"{review.comment}"</p>
               </CardContent>
             </Card>

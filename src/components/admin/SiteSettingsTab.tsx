@@ -8,7 +8,16 @@ import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
 
 const SiteSettingsTab = () => {
-  const [heroImageUrl, setHeroImageUrl] = useState("");
+  const [settings, setSettings] = useState({
+    hero_image_url: "",
+    logo_url: "",
+    instagram_url: "",
+    facebook_url: "",
+    phone: "",
+    email: "",
+    address: "",
+    map_query: "",
+  });
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
@@ -19,12 +28,15 @@ const SiteSettingsTab = () => {
   const fetchSettings = async () => {
     const { data } = await supabase
       .from("site_settings")
-      .select("*")
-      .eq("key", "hero_image_url")
-      .single();
+      .select("*");
     
     if (data) {
-      setHeroImageUrl(data.value);
+      const settingsMap = data.reduce((acc, item) => {
+        acc[item.key] = item.value;
+        return acc;
+      }, {} as Record<string, string>);
+      
+      setSettings(prev => ({ ...prev, ...settingsMap }));
     }
   };
 
@@ -55,24 +67,23 @@ const SiteSettingsTab = () => {
       .from("gallery")
       .getPublicUrl(fileName);
 
-    const { error: updateError } = await supabase
-      .from("site_settings")
-      .update({ value: publicUrl, updated_at: new Date().toISOString() })
-      .eq("key", "hero_image_url");
+      const { error: updateError } = await supabase
+        .from("site_settings")
+        .upsert({ key: "hero_image_url", value: publicUrl, updated_at: new Date().toISOString() });
 
-    if (updateError) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de mettre à jour les paramètres",
-      });
-    } else {
-      setHeroImageUrl(publicUrl);
-      toast({
-        title: "Image mise à jour",
-        description: "L'image de présentation a été changée avec succès",
-      });
-    }
+      if (updateError) {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de mettre à jour les paramètres",
+        });
+      } else {
+        setSettings(prev => ({ ...prev, hero_image_url: publicUrl }));
+        toast({
+          title: "Image mise à jour",
+          description: "L'image de présentation a été changée avec succès",
+        });
+      }
 
     setUploading(false);
   };
@@ -89,10 +100,10 @@ const SiteSettingsTab = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {heroImageUrl && (
+          {settings.hero_image_url && (
             <div className="relative aspect-video w-full max-w-2xl overflow-hidden rounded-lg border">
               <img
-                src={heroImageUrl}
+                src={settings.hero_image_url}
                 alt="Hero"
                 className="w-full h-full object-cover"
               />

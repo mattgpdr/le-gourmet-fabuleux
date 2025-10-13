@@ -3,21 +3,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Plus, Pencil, Trash2, Upload } from "lucide-react";
 
 interface MenuItem {
   id: string;
   name: string;
   description: string | null;
+  detailed_description?: string | null;
+  image_url?: string | null;
   price: number;
   category_id: string;
 }
@@ -30,13 +26,16 @@ interface Category {
 const MenuTab = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    detailed_description: "",
     price: "",
     category_id: "",
+    image_url: "",
   });
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -53,41 +52,65 @@ const MenuTab = () => {
     if (itemsRes.data) setMenuItems(itemsRes.data);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (!formData.name || !formData.price || !formData.category_id) {
+    setUploading(true);
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `menu-${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("gallery")
+      .upload(fileName, file);
+
+    if (uploadError) {
       toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
         variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de télécharger l'image",
       });
+      setUploading(false);
       return;
     }
 
+    const { data: { publicUrl } } = supabase.storage
+      .from("gallery")
+      .getPublicUrl(fileName);
+
+    setFormData(prev => ({ ...prev, image_url: publicUrl }));
+    setUploading(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     const itemData = {
       name: formData.name,
-      description: formData.description || null,
+      description: formData.description,
+      detailed_description: formData.detailed_description || null,
+      image_url: formData.image_url || null,
       price: parseFloat(formData.price),
       category_id: formData.category_id,
     };
 
-    if (editingItem) {
+    if (editingId) {
       const { error } = await supabase
         .from("menu_items")
         .update(itemData)
-        .eq("id", editingItem.id);
+        .eq("id", editingId);
 
       if (error) {
         toast({
           title: "Erreur",
-          description: "Impossible de mettre à jour l'élément",
+          description: "Impossible de modifier l'élément",
           variant: "destructive",
         });
       } else {
         toast({
           title: "Succès",
-          description: "Élément mis à jour avec succès",
+          description: "Élément modifié avec succès",
         });
       }
     } else {
@@ -107,8 +130,15 @@ const MenuTab = () => {
       }
     }
 
-    setFormData({ name: "", description: "", price: "", category_id: "" });
-    setEditingItem(null);
+    setFormData({
+      name: "",
+      description: "",
+      detailed_description: "",
+      price: "",
+      category_id: "",
+      image_url: "",
+    });
+    setEditingId(null);
     fetchData();
   };
 
@@ -133,101 +163,129 @@ const MenuTab = () => {
   };
 
   const startEdit = (item: MenuItem) => {
-    setEditingItem(item);
+    setEditingId(item.id);
     setFormData({
       name: item.name,
       description: item.description || "",
+      detailed_description: item.detailed_description || "",
       price: item.price.toString(),
       category_id: item.category_id,
+      image_url: item.image_url || "",
     });
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      <h2 className="text-2xl font-serif font-bold">Gestion du menu</h2>
+
       <Card>
         <CardHeader>
-          <CardTitle>
-            {editingItem ? "Modifier l'élément" : "Ajouter un nouvel élément"}
-          </CardTitle>
+          <CardTitle>{editingId ? "Modifier" : "Ajouter"} un plat</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Nom *</label>
+              <Label>Nom du plat *</Label>
               <Input
+                placeholder="Ex: Boeuf Bourguignon"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Nom du plat"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Description</label>
-              <Textarea
+              <Label>Description courte</Label>
+              <Input
+                placeholder="Une brève description du plat"
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Description du plat"
-                rows={3}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Prix (€) *</label>
+              <Label>Description détaillée</Label>
+              <Textarea
+                className="min-h-[100px]"
+                placeholder="Description complète avec ingrédients, accompagnements, etc."
+                value={formData.detailed_description}
+                onChange={(e) => setFormData({ ...formData, detailed_description: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="menu-image">Image du plat</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="menu-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUploadImage}
+                  disabled={uploading}
+                />
+                <Button type="button" disabled={uploading} size="icon" variant="outline">
+                  <Upload className="h-4 w-4" />
+                </Button>
+              </div>
+              {formData.image_url && (
+                <div className="mt-2">
+                  <img
+                    src={formData.image_url}
+                    alt="Preview"
+                    className="h-32 w-32 object-cover rounded border"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <Label>Prix (€) *</Label>
               <Input
                 type="number"
                 step="0.01"
+                placeholder="25.00"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                placeholder="15.00"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Catégorie *</label>
-              <Select
+              <Label>Catégorie *</Label>
+              <select
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={formData.category_id}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, category_id: value })
-                }
+                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                required
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une catégorie" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <option value="">Sélectionner une catégorie</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="flex gap-2">
               <Button type="submit" className="flex-1">
-                {editingItem ? (
-                  <>
-                    <Pencil className="h-4 w-4 mr-2" />
-                    Mettre à jour
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Ajouter
-                  </>
-                )}
+                <Plus className="h-4 w-4 mr-2" />
+                {editingId ? "Mettre à jour" : "Ajouter"}
               </Button>
-              {editingItem && (
+              {editingId && (
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    setEditingItem(null);
-                    setFormData({ name: "", description: "", price: "", category_id: "" });
+                    setEditingId(null);
+                    setFormData({
+                      name: "",
+                      description: "",
+                      detailed_description: "",
+                      price: "",
+                      category_id: "",
+                      image_url: "",
+                    });
                   }}
                 >
                   Annuler
@@ -239,30 +297,43 @@ const MenuTab = () => {
       </Card>
 
       <div className="space-y-6">
-        <h2 className="text-2xl font-serif font-bold">Éléments du menu</h2>
         {categories.map((category) => {
           const items = menuItems.filter((item) => item.category_id === category.id);
           if (items.length === 0) return null;
 
           return (
-            <div key={category.id}>
-              <h3 className="text-xl font-serif font-semibold mb-4">{category.name}</h3>
-              <div className="grid gap-4">
-                {items.map((item) => (
-                  <Card key={item.id}>
-                    <CardContent className="p-4 flex justify-between items-start">
+            <Card key={category.id}>
+              <CardHeader>
+                <CardTitle>{category.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-start justify-between p-3 border rounded-lg hover:bg-muted/50"
+                    >
                       <div className="flex-1">
-                        <h4 className="font-semibold text-lg">{item.name}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-semibold">{item.name}</h4>
+                          <span className="text-primary font-semibold">
+                            {item.price.toFixed(2)}€
+                          </span>
+                        </div>
                         {item.description && (
                           <p className="text-sm text-muted-foreground mt-1">
                             {item.description}
                           </p>
                         )}
-                        <p className="text-primary font-semibold mt-2">
-                          {item.price.toFixed(2)}€
-                        </p>
+                        {item.image_url && (
+                          <img
+                            src={item.image_url}
+                            alt={item.name}
+                            className="h-16 w-16 object-cover rounded mt-2"
+                          />
+                        )}
                       </div>
-                      <div className="flex gap-2 ml-4">
+                      <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
@@ -278,11 +349,11 @@ const MenuTab = () => {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           );
         })}
       </div>

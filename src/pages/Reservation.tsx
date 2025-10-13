@@ -9,9 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import { z } from "zod";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const Reservation = () => {
   const navigate = useNavigate();
@@ -107,17 +107,10 @@ const Reservation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link to="/" className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors">
-            <ArrowLeft className="h-5 w-5" />
-            <span>Retour au site</span>
-          </Link>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-4 pt-24 pb-12">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-muted/30 pt-24 pb-12">
+        <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4 text-primary">
             Réserver une table
@@ -236,8 +229,10 @@ const Reservation = () => {
             </div>
           </form>
         </div>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

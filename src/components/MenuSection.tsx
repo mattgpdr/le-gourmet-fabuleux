@@ -69,55 +69,12 @@ const MenuSection = () => {
           Découvrez notre sélection de plats raffinés, élaborés avec des produits frais et de saison. 
           Chaque création est le fruit d'un savoir-faire unique et d'une passion pour la gastronomie française.
         </p>
-        <div className="text-center mb-16">
+        <div className="text-center">
           <a href="/menu">
             <button className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:scale-105 transition-transform shadow-elegant">
-              Notre menu complet
+              Voir notre menu complet
             </button>
           </a>
-        </div>
-
-        <div className="space-y-16">
-          {categories.map((category) => {
-            const items = menuItems.filter((item) => item.category_id === category.id);
-            
-            if (items.length === 0) return null;
-
-            return (
-              <div key={category.id}>
-                <h3 className="text-3xl font-serif font-semibold text-primary mb-8 text-center">
-                  {category.name}
-                </h3>
-                <div className="grid gap-6">
-                  {items.map((item) => (
-                    <Card 
-                      key={item.id} 
-                      className="overflow-hidden hover:shadow-elegant transition-all duration-300 hover:-translate-y-1"
-                      style={{ background: "var(--gradient-card)" }}
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="flex-1">
-                            <h4 className="text-xl font-serif font-semibold mb-2 text-foreground">
-                              {item.name}
-                            </h4>
-                            {item.description && (
-                              <p className="text-muted-foreground">
-                                {item.description}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-2xl font-semibold text-primary whitespace-nowrap">
-                            {item.price.toFixed(2)}€
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
     </section>

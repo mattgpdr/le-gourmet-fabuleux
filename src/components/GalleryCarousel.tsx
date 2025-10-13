@@ -8,6 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import ImageLightbox from "./ImageLightbox";
 
 interface GalleryImage {
   id: string;
@@ -17,6 +18,7 @@ interface GalleryImage {
 
 const GalleryCarousel = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
 
   useEffect(() => {
     fetchImages();
@@ -67,13 +69,18 @@ const GalleryCarousel = () => {
             {images.map((image) => (
               <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
                 <div className="p-2">
-                  <div className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer">
+                  <div 
+                    className="relative aspect-square overflow-hidden rounded-lg group cursor-pointer"
+                    onClick={() => setSelectedImage(image)}
+                  >
                     <img
                       src={image.image_url}
                       alt={image.alt_text || "Gallery image"}
                       className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <span className="text-white font-medium">Agrandir</span>
+                    </div>
                   </div>
                 </div>
               </CarouselItem>
@@ -82,6 +89,13 @@ const GalleryCarousel = () => {
           <CarouselPrevious className="left-2" />
           <CarouselNext className="right-2" />
         </Carousel>
+
+        <ImageLightbox
+          imageUrl={selectedImage?.image_url || ""}
+          alt={selectedImage?.alt_text || ""}
+          open={!!selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
       </div>
     </section>
   );
