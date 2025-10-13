@@ -18,6 +18,11 @@ const SiteSettingsTab = () => {
     email: "",
     address: "",
     map_query: "",
+    hero_title: "",
+    hero_description: "",
+    footer_name: "",
+    footer_description: "",
+    contact_directions: "",
   });
   const [uploading, setUploading] = useState<string | null>(null);
   const { toast } = useToast();
@@ -358,6 +363,114 @@ const SiteSettingsTab = () => {
             <p className="text-xs text-muted-foreground">
               Entrez le nom du restaurant ou l'adresse pour la recherche Google Maps
             </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Textes du site</CardTitle>
+          <CardDescription>
+            Personnalisez les textes affichés sur le site
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="hero_title">Titre de la page d'accueil</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="hero_title"
+                value={settings.hero_title}
+                onChange={(e) => setSettings(prev => ({ ...prev, hero_title: e.target.value }))}
+                placeholder="Le Gourmet Parisien"
+              />
+              <Button 
+                onClick={() => handleSaveSetting("hero_title", settings.hero_title)}
+                size="icon"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="hero_description">Description de la page d'accueil</Label>
+            <div className="flex items-center gap-2">
+              <Textarea
+                id="hero_description"
+                value={settings.hero_description}
+                onChange={(e) => setSettings(prev => ({ ...prev, hero_description: e.target.value }))}
+                placeholder="Une expérience culinaire authentique au cœur de Paris"
+                rows={2}
+              />
+              <Button 
+                onClick={() => handleSaveSetting("hero_description", settings.hero_description)}
+                size="icon"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="footer_name">Nom du restaurant (Footer)</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="footer_name"
+                value={settings.footer_name}
+                onChange={(e) => setSettings(prev => ({ ...prev, footer_name: e.target.value }))}
+                placeholder="Le Gourmet Fabuleux"
+              />
+              <Button 
+                onClick={() => handleSaveSetting("footer_name", settings.footer_name)}
+                size="icon"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="footer_description">Description (Footer)</Label>
+            <div className="flex items-center gap-2">
+              <Textarea
+                id="footer_description"
+                value={settings.footer_description}
+                onChange={(e) => setSettings(prev => ({ ...prev, footer_description: e.target.value }))}
+                placeholder="Une expérience gastronomique unique au cœur de Paris"
+                rows={2}
+              />
+              <Button 
+                onClick={() => handleSaveSetting("footer_description", settings.footer_description)}
+                size="icon"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="contact_directions">Texte "Comment nous trouver"</Label>
+            <div className="flex items-center gap-2">
+              <Textarea
+                id="contact_directions"
+                value={settings.contact_directions}
+                onChange={(e) => setSettings(prev => ({ ...prev, contact_directions: e.target.value }))}
+                placeholder="Notre restaurant est facilement accessible en métro..."
+                rows={3}
+              />
+              <Button 
+                onClick={() => handleSaveSetting("contact_directions", settings.contact_directions)}
+                size="icon"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -50,7 +50,10 @@ const ReservationsTab = () => {
   const handleToggleProcessed = async (id: string, currentStatus: boolean) => {
     const { error } = await supabase
       .from("reservations")
-      .update({ is_processed: !currentStatus })
+      .update({ 
+        is_processed: !currentStatus,
+        is_viewed: true 
+      })
       .eq("id", id);
 
     if (error) {

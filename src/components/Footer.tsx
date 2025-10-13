@@ -9,6 +9,8 @@ const Footer = () => {
     address: "123 Avenue des Champs-Élysées, 75008 Paris, France",
     instagram_url: "https://instagram.com",
     facebook_url: "https://facebook.com",
+    footer_name: "Le Gourmet Fabuleux",
+    footer_description: "Une expérience gastronomique unique au cœur de Paris",
   });
 
   useEffect(() => {
@@ -19,7 +21,7 @@ const Footer = () => {
     const { data } = await supabase
       .from("site_settings")
       .select("*")
-      .in("key", ["phone", "email", "address", "instagram_url", "facebook_url"]);
+      .in("key", ["phone", "email", "address", "instagram_url", "facebook_url", "footer_name", "footer_description"]);
 
     if (data) {
       const settingsMap = data.reduce((acc, item) => {
@@ -36,9 +38,9 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-serif font-bold mb-4">Le Gourmet Fabuleux</h3>
+            <h3 className="text-xl font-serif font-bold mb-4">{settings.footer_name}</h3>
             <p className="text-muted-foreground">
-              Une expérience gastronomique unique au cœur de Paris
+              {settings.footer_description}
             </p>
           </div>
 

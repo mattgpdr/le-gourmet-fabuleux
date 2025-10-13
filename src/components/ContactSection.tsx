@@ -33,6 +33,7 @@ const ContactSection = () => {
     email: "contact@legourmetparisien.fr",
     address: "123 Avenue des Champs-Élysées, 75008 Paris, France",
     map_query: "Le Gourmet Fabuleux Paris",
+    contact_directions: "Notre restaurant est facilement accessible en métro (ligne 1, station Franklin D. Roosevelt) ou en bus. Plusieurs parkings sont disponibles à proximité.",
   });
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const ContactSection = () => {
     const { data } = await supabase
       .from("site_settings")
       .select("*")
-      .in("key", ["phone", "email", "address", "map_query"]);
+      .in("key", ["phone", "email", "address", "map_query", "contact_directions"]);
 
     if (data) {
       const settingsMap = data.reduce((acc, item) => {
@@ -229,9 +230,8 @@ const ContactSection = () => {
 
             <Card className="p-6 bg-muted/50">
               <h4 className="font-semibold mb-2">Comment nous trouver</h4>
-              <p className="text-sm text-muted-foreground">
-                Notre restaurant est facilement accessible en métro (ligne 1, station Franklin D. Roosevelt) 
-                ou en bus. Plusieurs parkings sont disponibles à proximité.
+              <p className="text-sm text-muted-foreground whitespace-pre-line">
+                {contactInfo.contact_directions}
               </p>
             </Card>
           </div>

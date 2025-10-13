@@ -7,6 +7,8 @@ const Hero = () => {
   const { ref, isVisible } = useScrollAnimation();
   const [scrollY, setScrollY] = useState(0);
   const [heroImage, setHeroImage] = useState(heroImageDefault);
+  const [heroTitle, setHeroTitle] = useState("Le Gourmet Parisien");
+  const [heroDescription, setHeroDescription] = useState("Une expérience culinaire authentique au cœur de Paris");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,12 +26,24 @@ const Hero = () => {
   const fetchHeroImage = async () => {
     const { data } = await supabase
       .from("site_settings")
-      .select("value")
-      .eq("key", "hero_image_url")
-      .single();
+      .select("*")
+      .in("key", ["hero_image_url", "hero_title", "hero_description"]);
     
-    if (data?.value && data.value.startsWith("http")) {
-      setHeroImage(data.value);
+    if (data) {
+      const settingsMap = data.reduce((acc, item) => {
+        acc[item.key] = item.value;
+        return acc;
+      }, {} as Record<string, string>);
+      
+      if (settingsMap.hero_image_url?.startsWith("http")) {
+        setHeroImage(settingsMap.hero_image_url);
+      }
+      if (settingsMap.hero_title) {
+        setHeroTitle(settingsMap.hero_title);
+      }
+      if (settingsMap.hero_description) {
+        setHeroDescription(settingsMap.hero_description);
+      }
     }
   };
 
@@ -56,10 +70,10 @@ const Hero = () => {
       
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 animate-fade-in">
-          Le Gourmet Parisien
+          {heroTitle}
         </h1>
         <p className="text-xl md:text-2xl text-white/90 mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          Une expérience culinaire authentique au cœur de Paris
+          {heroDescription}
         </p>
         <div className="flex gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.4s" }}>
           <button 
