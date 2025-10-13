@@ -62,18 +62,24 @@ const Hero = () => {
           Une expérience culinaire authentique au cœur de Paris
         </p>
         <div className="flex gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.4s" }}>
-          <a 
-            href="#menu-preview" 
+          <button 
+            onClick={() => {
+              const element = document.getElementById("menu-preview");
+              element?.scrollIntoView({ behavior: "smooth" });
+            }}
             className="px-8 py-3 bg-primary text-white rounded-lg font-medium hover:scale-105 transition-transform shadow-elegant"
           >
             Découvrir le menu
-          </a>
-          <a 
-            href="#avis" 
+          </button>
+          <button 
+            onClick={() => {
+              const element = document.getElementById("avis");
+              element?.scrollIntoView({ behavior: "smooth" });
+            }}
             className="px-8 py-3 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-lg font-medium hover:bg-white/20 transition-colors"
           >
             Nos avis
-          </a>
+          </button>
         </div>
       </div>
     </section>
