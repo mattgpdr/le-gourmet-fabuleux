@@ -147,11 +147,10 @@ export const useLogoColor = () => {
             `${hsl.h} ${hsl.s}% ${hsl.l}%`
           );
           
-          // Create lighter variant for hover effects
-          const lighterL = Math.min(hsl.l + 10, 95);
+          // Always use white text for primary buttons
           document.documentElement.style.setProperty(
             "--primary-foreground",
-            `${hsl.h} ${hsl.s}% ${lighterL > 50 ? 10 : 98}%`
+            `0 0% 100%`
           );
           
           console.log(`Primary color updated to: hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`);

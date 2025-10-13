@@ -63,8 +63,8 @@ const Hero = () => {
         </p>
         <div className="flex gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.4s" }}>
           <a 
-            href="#menu" 
-            className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:scale-105 transition-transform shadow-elegant"
+            href="#menu-preview" 
+            className="px-8 py-3 bg-primary text-white rounded-lg font-medium hover:scale-105 transition-transform shadow-elegant"
           >
             Découvrir le menu
           </a>
