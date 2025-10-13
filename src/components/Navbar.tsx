@@ -8,20 +8,30 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [logoUrl, setLogoUrl] = useState<string>("");
+  const [navbarTitle, setNavbarTitle] = useState("Le Gourmet Parisien");
 
   useEffect(() => {
-    fetchLogo();
+    fetchSettings();
   }, []);
 
-  const fetchLogo = async () => {
+  const fetchSettings = async () => {
     const { data } = await supabase
       .from("site_settings")
-      .select("value")
-      .eq("key", "logo_url")
-      .single();
+      .select("*")
+      .in("key", ["logo_url", "navbar_title"]);
     
-    if (data?.value) {
-      setLogoUrl(data.value);
+    if (data) {
+      const settingsMap = data.reduce((acc, item) => {
+        acc[item.key] = item.value;
+        return acc;
+      }, {} as Record<string, string>);
+      
+      if (settingsMap.logo_url) {
+        setLogoUrl(settingsMap.logo_url);
+      }
+      if (settingsMap.navbar_title) {
+        setNavbarTitle(settingsMap.navbar_title);
+      }
     }
   };
 
@@ -66,7 +76,7 @@ const Navbar = () => {
               <ChefHat className="h-12 w-12 text-primary transition-transform group-hover:scale-110" />
             )}
             <span className="text-2xl font-serif font-bold text-primary">
-              Le Gourmet Parisien
+              {navbarTitle}
             </span>
           </Link>
           

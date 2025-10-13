@@ -23,6 +23,7 @@ const SiteSettingsTab = () => {
     footer_name: "",
     footer_description: "",
     contact_directions: "",
+    navbar_title: "",
   });
   const [uploading, setUploading] = useState<string | null>(null);
   const { toast } = useToast();
@@ -375,6 +376,25 @@ const SiteSettingsTab = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="navbar_title">Nom du restaurant (Navbar)</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="navbar_title"
+                value={settings.navbar_title}
+                onChange={(e) => setSettings(prev => ({ ...prev, navbar_title: e.target.value }))}
+                placeholder="Le Gourmet Parisien"
+              />
+              <Button 
+                onClick={() => handleSaveSetting("navbar_title", settings.navbar_title)}
+                size="icon"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="hero_title">Titre de la page d'accueil</Label>
             <div className="flex items-center gap-2">
