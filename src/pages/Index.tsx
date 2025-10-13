@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import GalleryCarousel from "@/components/GalleryCarousel";
+import MenuPreviewSection from "@/components/MenuPreviewSection";
 import MenuSection from "@/components/MenuSection";
 import OpeningHoursSection from "@/components/OpeningHoursSection";
 import ReservationSection from "@/components/ReservationSection";
@@ -16,6 +17,7 @@ const Index = () => {
       <main className="pt-20">
         <Hero />
         <GalleryCarousel />
+        <MenuPreviewSection />
         <MenuSection />
         <OpeningHoursSection />
         <ReservationSection />
