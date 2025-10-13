@@ -47,46 +47,70 @@ const SiteSettingsTab = () => {
 
     setUploading(key);
 
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${key}-${Date.now()}.${fileExt}`;
+    try {
+      // Vérifier la session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        toast({
+          variant: "destructive",
+          title: "Session expirée",
+          description: "Veuillez vous reconnecter",
+        });
+        setUploading(null);
+        return;
+      }
 
-    const { error: uploadError } = await supabase.storage
-      .from("gallery")
-      .upload(fileName, file);
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${key}-${Date.now()}.${fileExt}`;
 
-    if (uploadError) {
+      const { error: uploadError } = await supabase.storage
+        .from("gallery")
+        .upload(fileName, file);
+
+      if (uploadError) {
+        console.error("Upload error:", uploadError);
+        toast({
+          variant: "destructive",
+          title: "Erreur de téléchargement",
+          description: uploadError.message || "Impossible de télécharger l'image",
+        });
+        setUploading(null);
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("gallery")
+        .getPublicUrl(fileName);
+
+      const { error: updateError } = await supabase
+        .from("site_settings")
+        .upsert({ key, value: publicUrl, updated_at: new Date().toISOString() });
+
+      if (updateError) {
+        console.error("Update error:", updateError);
+        toast({
+          variant: "destructive",
+          title: "Erreur de mise à jour",
+          description: updateError.message || "Impossible de mettre à jour les paramètres",
+        });
+      } else {
+        setSettings(prev => ({ ...prev, [key]: publicUrl }));
+        toast({
+          title: "Image mise à jour",
+          description: "L'image a été changée avec succès",
+        });
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de télécharger l'image",
+        title: "Erreur inattendue",
+        description: "Une erreur s'est produite. Veuillez réessayer.",
       });
+    } finally {
       setUploading(null);
-      return;
     }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from("gallery")
-      .getPublicUrl(fileName);
-
-    const { error: updateError } = await supabase
-      .from("site_settings")
-      .upsert({ key, value: publicUrl, updated_at: new Date().toISOString() });
-
-    if (updateError) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de mettre à jour les paramètres",
-      });
-    } else {
-      setSettings(prev => ({ ...prev, [key]: publicUrl }));
-      toast({
-        title: "Image mise à jour",
-        description: "L'image a été changée avec succès",
-      });
-    }
-
-    setUploading(null);
   };
 
   const handleSaveSetting = async (key: string, value: string) => {
