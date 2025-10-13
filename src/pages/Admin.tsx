@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LogOut, Menu, Users, ImageIcon, MessageSquare, ArrowLeft, Mail, Settings, HelpCircle } from "lucide-react";
+import { LogOut, Menu, Users, ImageIcon, MessageSquare, ArrowLeft, Mail, Settings, HelpCircle, Clock } from "lucide-react";
 import MenuTab from "@/components/admin/MenuTab";
 import ReservationsTab from "@/components/admin/ReservationsTab";
 import GalleryTab from "@/components/admin/GalleryTab";
@@ -12,6 +12,7 @@ import ReviewsTab from "@/components/admin/ReviewsTab";
 import ContactMessagesTab from "@/components/admin/ContactMessagesTab";
 import SiteSettingsTab from "@/components/admin/SiteSettingsTab";
 import FAQTab from "@/components/admin/FAQTab";
+import OpeningHoursTab from "@/components/admin/OpeningHoursTab";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -23,6 +24,10 @@ const Admin = () => {
   useEffect(() => {
     checkAuth();
     fetchNotifications();
+
+    // Rafraîchir les notifications toutes les 30 secondes
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const checkAuth = async () => {
@@ -100,7 +105,7 @@ const Admin = () => {
 
       <div className="container mx-auto px-4 pt-24 pb-12">
         <Tabs defaultValue="menu" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 max-w-5xl mx-auto mb-8">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 max-w-6xl mx-auto mb-8">
             <TabsTrigger value="menu">
               <Menu className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Menu</span>
@@ -131,6 +136,10 @@ const Admin = () => {
                 </Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="hours">
+              <Clock className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Horaires</span>
+            </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Paramètres</span>
@@ -159,6 +168,10 @@ const Admin = () => {
 
           <TabsContent value="messages">
             <ContactMessagesTab />
+          </TabsContent>
+
+          <TabsContent value="hours">
+            <OpeningHoursTab />
           </TabsContent>
 
           <TabsContent value="settings">

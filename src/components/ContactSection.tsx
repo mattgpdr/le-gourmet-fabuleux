@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,32 @@ const ContactSection = () => {
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [contactInfo, setContactInfo] = useState({
+    phone: "01 23 45 67 89",
+    email: "contact@legourmetparisien.fr",
+    address: "123 Avenue des Champs-Élysées, 75008 Paris, France",
+    map_query: "Le Gourmet Fabuleux Paris",
+  });
+
+  useEffect(() => {
+    fetchContactInfo();
+  }, []);
+
+  const fetchContactInfo = async () => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("*")
+      .in("key", ["phone", "email", "address", "map_query"]);
+
+    if (data) {
+      const settingsMap = data.reduce((acc, item) => {
+        acc[item.key] = item.value;
+        return acc;
+      }, {} as Record<string, string>);
+      
+      setContactInfo(prev => ({ ...prev, ...settingsMap }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,10 +186,10 @@ const ContactSection = () => {
                 <div>
                   <h4 className="font-semibold mb-2">Téléphone</h4>
                   <a 
-                    href="tel:+33123456789" 
+                    href={`tel:${contactInfo.phone}`}
                     className="text-primary hover:underline"
                   >
-                    01 23 45 67 89
+                    {contactInfo.phone}
                   </a>
                 </div>
               </div>
@@ -173,10 +199,10 @@ const ContactSection = () => {
                 <div>
                   <h4 className="font-semibold mb-2">E-mail</h4>
                   <a 
-                    href="mailto:contact@legourmetparisien.fr" 
+                    href={`mailto:${contactInfo.email}`}
                     className="text-primary hover:underline"
                   >
-                    contact@legourmetparisien.fr
+                    {contactInfo.email}
                   </a>
                 </div>
               </div>
@@ -185,14 +211,12 @@ const ContactSection = () => {
                 <MapPin className="h-6 w-6 text-primary mt-1" />
                 <div>
                   <h4 className="font-semibold mb-2">Adresse</h4>
-                  <p className="text-muted-foreground mb-2">
-                    123 Avenue des Champs-Élysées<br />
-                    75008 Paris<br />
-                    France
+                  <p className="text-muted-foreground mb-2 whitespace-pre-line">
+                    {contactInfo.address}
                   </p>
                   <Button variant="outline" size="sm" asChild>
                     <a 
-                      href="https://www.google.com/maps/search/?api=1&query=Champs-Élysées+Paris"
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contactInfo.map_query || contactInfo.address)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

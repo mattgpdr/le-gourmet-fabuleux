@@ -1,56 +1,120 @@
+import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { supabase } from "@/integrations/supabase/client";
+
+interface OpeningHour {
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  is_closed: boolean;
+}
 
 const OpeningHoursSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const [openingHours, setOpeningHours] = useState<OpeningHour[]>([]);
+
+  useEffect(() => {
+    fetchOpeningHours();
+  }, []);
+
+  const fetchOpeningHours = async () => {
+    const { data } = await supabase
+      .from("opening_hours")
+      .select("*")
+      .order("day_of_week");
+
+    if (data && data.length > 0) {
+      setOpeningHours(data);
+    }
+  };
+
+  const timeToMinutes = (time: string): number => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
   const getCurrentStatus = () => {
+    if (openingHours.length === 0) return { isOpen: false, message: "Chargement..." };
+
     const now = new Date();
     const day = now.getDay();
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const currentTime = hours * 60 + minutes;
 
-    // Définir les horaires (en minutes depuis minuit)
-    const schedule: { [key: number]: { start: number; end: number } } = {
-      0: { start: 9 * 60, end: 22 * 60 }, // Dimanche
-      1: { start: 7 * 60, end: 23 * 60 }, // Lundi
-      2: { start: 7 * 60, end: 23 * 60 }, // Mardi
-      3: { start: 7 * 60, end: 23 * 60 }, // Mercredi
-      4: { start: 7 * 60, end: 23 * 60 }, // Jeudi
-      5: { start: 7 * 60, end: 23 * 60 }, // Vendredi
-      6: { start: 8 * 60, end: 23 * 60 }, // Samedi
-    };
+    const todayHours = openingHours.find(h => h.day_of_week === day);
+    
+    if (!todayHours || todayHours.is_closed) {
+      return { isOpen: false, message: "Fermé aujourd'hui" };
+    }
 
-    const todaySchedule = schedule[day];
-    const isOpen = currentTime >= todaySchedule.start && currentTime < todaySchedule.end;
+    const startTime = timeToMinutes(todayHours.start_time);
+    const endTime = timeToMinutes(todayHours.end_time);
+    const isOpen = currentTime >= startTime && currentTime < endTime;
 
     if (isOpen) {
-      const closingHour = Math.floor(todaySchedule.end / 60);
+      const closingHour = Math.floor(endTime / 60);
+      const closingMinute = endTime % 60;
       return {
         isOpen: true,
-        message: `Ouvert jusqu'à ${closingHour}:00`,
+        message: `Ouvert jusqu'à ${closingHour}:${closingMinute.toString().padStart(2, '0')}`,
       };
     } else {
-      const tomorrow = (day + 1) % 7;
-      const tomorrowSchedule = schedule[tomorrow];
-      const openingHour = Math.floor(tomorrowSchedule.start / 60);
-      const openingMinute = tomorrowSchedule.start % 60;
       return {
         isOpen: false,
-        message: `Fermé - Ouvre demain à ${openingHour}:${openingMinute.toString().padStart(2, '0')}`,
+        message: "Fermé",
       };
     }
   };
 
   const status = getCurrentStatus();
 
-  const hours = [
-    { day: "Lundi - Vendredi", time: "07:00 - 23:00" },
-    { day: "Samedi", time: "08:00 - 23:00" },
-    { day: "Dimanche", time: "09:00 - 22:00" },
-  ];
+  const dayNames = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+
+  const groupedHours = () => {
+    if (openingHours.length === 0) return [];
+
+    const groups: { days: string; time: string }[] = [];
+    let currentGroup: number[] = [];
+    let currentTime = "";
+
+    openingHours.forEach((hour, index) => {
+      const timeString = hour.is_closed 
+        ? "Fermé" 
+        : `${hour.start_time.slice(0, 5)} - ${hour.end_time.slice(0, 5)}`;
+
+      if (timeString === currentTime) {
+        currentGroup.push(hour.day_of_week);
+      } else {
+        if (currentGroup.length > 0) {
+          const dayRange = currentGroup.length > 1 && currentGroup[currentGroup.length - 1] - currentGroup[0] === currentGroup.length - 1
+            ? `${dayNames[currentGroup[0]]} - ${dayNames[currentGroup[currentGroup.length - 1]]}`
+            : currentGroup.map(d => dayNames[d]).join(", ");
+          groups.push({ days: dayRange, time: currentTime });
+        }
+        currentGroup = [hour.day_of_week];
+        currentTime = timeString;
+      }
+
+      if (index === openingHours.length - 1 && currentGroup.length > 0) {
+        const dayRange = currentGroup.length > 1 && currentGroup[currentGroup.length - 1] - currentGroup[0] === currentGroup.length - 1
+          ? `${dayNames[currentGroup[0]]} - ${dayNames[currentGroup[currentGroup.length - 1]]}`
+          : currentGroup.map(d => dayNames[d]).join(", ");
+        groups.push({ days: dayRange, time: currentTime });
+      }
+    });
+
+    return groups.length > 0 ? groups : [
+      { days: "Lundi - Vendredi", time: "07:00 - 23:00" },
+      { days: "Samedi", time: "08:00 - 23:00" },
+      { days: "Dimanche", time: "09:00 - 22:00" },
+    ];
+  };
+
+  const hours = groupedHours();
 
   return (
     <section id="horaires" ref={ref} className={`py-16 bg-muted/30 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -76,7 +140,7 @@ const OpeningHoursSection = () => {
                   key={index} 
                   className="flex justify-between items-center py-3 border-b last:border-b-0"
                 >
-                  <span className="font-semibold text-lg">{schedule.day}</span>
+                  <span className="font-semibold text-lg">{schedule.days}</span>
                   <span className="text-lg text-primary font-medium">{schedule.time}</span>
                 </div>
               ))}
