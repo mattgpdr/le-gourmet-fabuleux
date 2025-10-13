@@ -12,6 +12,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -23,6 +24,19 @@ const Auth = () => {
       }
     };
     checkAuth();
+
+    const fetchLogo = async () => {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "logo_url")
+        .single();
+      
+      if (data?.value) {
+        setLogoUrl(data.value);
+      }
+    };
+    fetchLogo();
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,7 +90,15 @@ const Auth = () => {
       <Card className="w-full max-w-md shadow-elegant">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <ChefHat className="h-12 w-12 text-primary" />
+            {logoUrl ? (
+              <img 
+                src={logoUrl} 
+                alt="Logo" 
+                className="h-12 w-auto object-contain"
+              />
+            ) : (
+              <ChefHat className="h-12 w-12 text-primary" />
+            )}
           </div>
           <CardTitle className="text-3xl font-serif">
             {isLogin ? "Connexion Admin" : "Créer un compte"}
