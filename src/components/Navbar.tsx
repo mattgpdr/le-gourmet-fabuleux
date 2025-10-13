@@ -11,7 +11,11 @@ const Navbar = () => {
       const element = document.getElementById("reservation");
       element?.scrollIntoView({ behavior: "smooth" });
     } else {
-      navigate("/reservation");
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById("reservation");
+        element?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     }
   };
 
