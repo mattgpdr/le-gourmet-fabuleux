@@ -101,8 +101,15 @@ const SiteSettingsTab = () => {
         setSettings(prev => ({ ...prev, [key]: publicUrl }));
         toast({
           title: "Image mise à jour",
-          description: "L'image a été changée avec succès",
+          description: "L'image a été changée avec succès. Les couleurs du site vont se mettre à jour.",
         });
+        
+        // Trigger a page reload to update colors if it's the logo
+        if (key === "logo_url") {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
       }
     } catch (error) {
       console.error("Unexpected error:", error);
