@@ -36,7 +36,7 @@ const MenuPreviewSection = () => {
     >
       <div className="container mx-auto max-w-4xl text-center">
         <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-elegant group">
-          <CardContent className="p-6 md:p-12">
+          <CardContent className="p-8 md:p-10">
             <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 mb-4 md:mb-6 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
               {logoUrl ? (
                 <img 
