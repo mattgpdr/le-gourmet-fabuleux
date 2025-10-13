@@ -1,8 +1,10 @@
 import { Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const OpeningHoursSection = () => {
+  const { ref, isVisible } = useScrollAnimation();
   const getCurrentStatus = () => {
     const now = new Date();
     const day = now.getDay();
@@ -51,7 +53,7 @@ const OpeningHoursSection = () => {
   ];
 
   return (
-    <section id="horaires" className="py-16 bg-muted/30">
+    <section id="horaires" ref={ref} className={`py-16 bg-muted/30 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">

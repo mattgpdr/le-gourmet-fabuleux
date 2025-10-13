@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
@@ -17,6 +18,7 @@ const contactSchema = z.object({
 });
 
 const ContactSection = () => {
+  const { ref, isVisible } = useScrollAnimation();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
@@ -78,7 +80,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-16 bg-background">
+    <section id="contact" ref={ref} className={`py-16 bg-background transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-serif font-bold text-center mb-12">
           Nous contacter

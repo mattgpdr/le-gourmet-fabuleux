@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { z } from "zod";
 
 interface Review {
@@ -17,6 +18,7 @@ interface Review {
 }
 
 const ReviewsSection = () => {
+  const { ref, isVisible } = useScrollAnimation();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [authorName, setAuthorName] = useState("");
   const [rating, setRating] = useState(5);
@@ -101,7 +103,7 @@ const ReviewsSection = () => {
   };
 
   return (
-    <section id="avis" className="py-20 px-4">
+    <section id="avis" ref={ref} className={`py-20 px-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto max-w-6xl">
         <h2 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4 text-primary">
           Avis de nos clients

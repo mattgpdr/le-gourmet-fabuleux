@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -16,6 +17,7 @@ interface Reservation {
   reservation_time: string;
   number_of_guests: number;
   message: string | null;
+  is_viewed: boolean;
   created_at: string;
 }
 
@@ -41,6 +43,27 @@ const ReservationsTab = () => {
       setReservations(data);
     }
     setLoading(false);
+  };
+
+  const handleToggleViewed = async (id: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from("reservations")
+      .update({ is_viewed: !currentStatus })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut",
+      });
+    } else {
+      fetchReservations();
+      toast({
+        title: "Statut mis à jour",
+        description: "La réservation a été marquée comme " + (!currentStatus ? "vue" : "non vue"),
+      });
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -70,7 +93,10 @@ const ReservationsTab = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-serif font-bold">Réservations ({reservations.length})</h2>
+        <h2 className="text-2xl font-serif font-bold">Réservations</h2>
+        <span className="text-sm text-muted-foreground">
+          {reservations.filter(r => !r.is_viewed).length} non vue(s)
+        </span>
       </div>
 
       {reservations.length === 0 ? (
@@ -82,10 +108,16 @@ const ReservationsTab = () => {
       ) : (
         <div className="grid gap-4">
           {reservations.map((reservation) => (
-            <Card key={reservation.id}>
+            <Card key={reservation.id} className={!reservation.is_viewed ? "border-primary" : ""}>
               <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                  <span>{reservation.customer_name}</span>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2 flex-1">
+                    <Checkbox
+                      checked={reservation.is_viewed}
+                      onCheckedChange={() => handleToggleViewed(reservation.id, reservation.is_viewed)}
+                    />
+                    <CardTitle>{reservation.customer_name}</CardTitle>
+                  </div>
                   <Button
                     variant="destructive"
                     size="sm"
@@ -93,7 +125,7 @@ const ReservationsTab = () => {
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
-                </CardTitle>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-4">

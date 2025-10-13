@@ -3,19 +3,26 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, Users, ImageIcon, MessageSquare, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { LogOut, Menu, Users, ImageIcon, MessageSquare, ArrowLeft, Mail, Settings, HelpCircle } from "lucide-react";
 import MenuTab from "@/components/admin/MenuTab";
 import ReservationsTab from "@/components/admin/ReservationsTab";
 import GalleryTab from "@/components/admin/GalleryTab";
 import ReviewsTab from "@/components/admin/ReviewsTab";
+import ContactMessagesTab from "@/components/admin/ContactMessagesTab";
+import SiteSettingsTab from "@/components/admin/SiteSettingsTab";
+import FAQTab from "@/components/admin/FAQTab";
 
 const Admin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [unviewedReservations, setUnviewedReservations] = useState(0);
 
   useEffect(() => {
     checkAuth();
+    fetchNotifications();
   }, []);
 
   const checkAuth = async () => {
@@ -40,6 +47,21 @@ const Admin = () => {
 
     setIsAdmin(true);
     setLoading(false);
+  };
+
+  const fetchNotifications = async () => {
+    const { data: messages } = await supabase
+      .from("contact_messages")
+      .select("id", { count: "exact" })
+      .eq("is_read", false);
+    
+    const { data: reservations } = await supabase
+      .from("reservations")
+      .select("id", { count: "exact" })
+      .eq("is_viewed", false);
+    
+    setUnreadMessages(messages?.length || 0);
+    setUnviewedReservations(reservations?.length || 0);
   };
 
   const handleLogout = async () => {
@@ -78,14 +100,19 @@ const Admin = () => {
 
       <div className="container mx-auto px-4 pt-24 pb-12">
         <Tabs defaultValue="menu" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-8">
+          <TabsList className="grid w-full grid-cols-7 max-w-5xl mx-auto mb-8">
             <TabsTrigger value="menu">
               <Menu className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Menu</span>
             </TabsTrigger>
-            <TabsTrigger value="reservations">
+            <TabsTrigger value="reservations" className="relative">
               <Users className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Réservations</span>
+              {unviewedReservations > 0 && (
+                <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
+                  {unviewedReservations}
+                </Badge>
+              )}
             </TabsTrigger>
             <TabsTrigger value="gallery">
               <ImageIcon className="h-4 w-4 mr-2" />
@@ -94,6 +121,23 @@ const Admin = () => {
             <TabsTrigger value="reviews">
               <MessageSquare className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Avis</span>
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="relative">
+              <Mail className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Messages</span>
+              {unreadMessages > 0 && (
+                <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
+                  {unreadMessages}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="settings">
+              <Settings className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Paramètres</span>
+            </TabsTrigger>
+            <TabsTrigger value="faq">
+              <HelpCircle className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">FAQ</span>
             </TabsTrigger>
           </TabsList>
 
@@ -111,6 +155,18 @@ const Admin = () => {
 
           <TabsContent value="reviews">
             <ReviewsTab />
+          </TabsContent>
+
+          <TabsContent value="messages">
+            <ContactMessagesTab />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <SiteSettingsTab />
+          </TabsContent>
+
+          <TabsContent value="faq">
+            <FAQTab />
           </TabsContent>
         </Tabs>
       </div>

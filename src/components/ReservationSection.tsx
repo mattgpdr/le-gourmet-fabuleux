@@ -1,10 +1,12 @@
 import { Calendar, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const ReservationSection = () => {
+  const { ref, isVisible } = useScrollAnimation();
   return (
-    <section id="reservation" className="py-16 bg-muted/30">
+    <section id="reservation" ref={ref} className={`py-16 bg-muted/30 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
           <Calendar className="h-16 w-16 mx-auto mb-4 text-primary" />

@@ -26,6 +26,7 @@ const GalleryCarousel = () => {
     const { data } = await supabase
       .from("gallery_images")
       .select("*")
+      .eq("is_visible", true)
       .order("display_order");
 
     if (data && data.length > 0) {
@@ -44,7 +45,7 @@ const GalleryCarousel = () => {
   };
 
   return (
-    <section id="galerie" className="py-16 bg-background">
+    <section id="galerie" className="py-16 bg-background animate-fade-in">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-serif font-bold text-center mb-12">
           Galerie
