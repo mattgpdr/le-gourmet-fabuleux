@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Trash2, Upload } from "lucide-react";
+import { Trash2, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface GalleryImage {
   id: string;
@@ -65,6 +65,7 @@ const GalleryTab = () => {
           alt_text: file.name,
           category: 'plats',
           display_order: images.length,
+          is_visible: false,
         });
 
       if (dbError) throw dbError;
@@ -137,14 +138,14 @@ const GalleryTab = () => {
     return <div>Chargement...</div>;
   }
 
+  const visibleImages = images.filter(img => img.is_visible);
+  const hiddenImages = images.filter(img => !img.is_visible);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-serif font-bold">Galerie</h2>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">
-            {images.filter(img => img.is_visible).length} / {images.length} visible(s)
-          </span>
           <Button onClick={() => document.getElementById("upload-input")?.click()} disabled={uploading}>
             <Upload className="mr-2 h-4 w-4" />
             {uploading ? "Envoi..." : "Ajouter"}
@@ -159,34 +160,94 @@ const GalleryTab = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {images.map((image) => (
-          <div key={image.id} className="relative group">
-            <img
-              src={image.image_url}
-              alt={image.alt_text || "Gallery"}
-              className="w-full h-48 object-cover rounded-lg"
-            />
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col items-center justify-center gap-2">
-              <div className="flex items-center gap-2 bg-background/90 px-3 py-1 rounded-full">
-                <Checkbox
-                  checked={image.is_visible}
-                  onCheckedChange={() => handleToggleVisibility(image.id, image.is_visible)}
-                />
-                <span className="text-xs">{image.is_visible ? "Visible" : "Masqué"}</span>
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => handleDelete(image.id, image.image_url)}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Supprimer
-              </Button>
+      <Tabs defaultValue="hidden" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsTrigger value="visible" className="flex items-center gap-2">
+            <Eye className="h-4 w-4" />
+            Visible ({visibleImages.length})
+          </TabsTrigger>
+          <TabsTrigger value="hidden" className="flex items-center gap-2">
+            <EyeOff className="h-4 w-4" />
+            Vos images ({hiddenImages.length})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="visible" className="mt-6">
+          {visibleImages.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              Aucune image visible pour le moment
             </div>
-          </div>
-        ))}
-      </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {visibleImages.map((image) => (
+                <div key={image.id} className="relative group">
+                  <img
+                    src={image.image_url}
+                    alt={image.alt_text || "Gallery"}
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col items-center justify-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleToggleVisibility(image.id, image.is_visible)}
+                    >
+                      <EyeOff className="h-4 w-4 mr-2" />
+                      Masquer
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(image.id, image.image_url)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Supprimer
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="hidden" className="mt-6">
+          {hiddenImages.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              Aucune image masquée
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {hiddenImages.map((image) => (
+                <div key={image.id} className="relative group">
+                  <img
+                    src={image.image_url}
+                    alt={image.alt_text || "Gallery"}
+                    className="w-full h-48 object-cover rounded-lg opacity-60"
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col items-center justify-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleToggleVisibility(image.id, image.is_visible)}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Rendre visible
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(image.id, image.image_url)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Supprimer
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

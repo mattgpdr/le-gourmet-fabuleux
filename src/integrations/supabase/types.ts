@@ -227,6 +227,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           id: string
+          is_processed: boolean
           is_viewed: boolean
           message: string | null
           number_of_guests: number
@@ -240,6 +241,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           id?: string
+          is_processed?: boolean
           is_viewed?: boolean
           message?: string | null
           number_of_guests?: number
@@ -253,6 +255,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           id?: string
+          is_processed?: boolean
           is_viewed?: boolean
           message?: string | null
           number_of_guests?: number
