@@ -85,7 +85,10 @@ const SiteSettingsTab = () => {
 
       const { error: updateError } = await supabase
         .from("site_settings")
-        .upsert({ key, value: publicUrl, updated_at: new Date().toISOString() });
+        .upsert(
+          { key, value: publicUrl, updated_at: new Date().toISOString() },
+          { onConflict: 'key' }
+        );
 
       if (updateError) {
         console.error("Update error:", updateError);
@@ -116,7 +119,10 @@ const SiteSettingsTab = () => {
   const handleSaveSetting = async (key: string, value: string) => {
     const { error } = await supabase
       .from("site_settings")
-      .upsert({ key, value, updated_at: new Date().toISOString() });
+      .upsert(
+        { key, value, updated_at: new Date().toISOString() },
+        { onConflict: 'key' }
+      );
 
     if (error) {
       toast({
