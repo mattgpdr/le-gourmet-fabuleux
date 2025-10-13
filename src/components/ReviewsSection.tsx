@@ -34,6 +34,7 @@ const ReviewsSection = () => {
     const { data } = await supabase
       .from("reviews")
       .select("*")
+      .eq("is_confirmed", true)
       .order("created_at", { ascending: false })
       .limit(6);
 
@@ -91,12 +92,11 @@ const ReviewsSection = () => {
     } else {
       toast({
         title: "Merci !",
-        description: "Votre avis a été publié",
+        description: "Votre avis a été soumis et sera publié après validation",
       });
       setAuthorName("");
       setComment("");
       setRating(5);
-      fetchReviews();
     }
 
     setSubmitting(false);
