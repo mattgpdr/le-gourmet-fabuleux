@@ -32,6 +32,10 @@ const Menu = () => {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     fetchMenuData();
   }, []);
 

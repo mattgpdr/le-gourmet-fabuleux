@@ -15,7 +15,7 @@ const Navbar = () => {
       setTimeout(() => {
         const element = document.getElementById("reservation");
         element?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
+      }, 300);
     }
   };
 
@@ -28,7 +28,7 @@ const Navbar = () => {
       setTimeout(() => {
         const element = document.getElementById("contact");
         element?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
+      }, 300);
     }
   };
 
