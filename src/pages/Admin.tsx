@@ -20,14 +20,94 @@ const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [unviewedReservations, setUnviewedReservations] = useState(0);
+  const [newReviews, setNewReviews] = useState(0);
+  const [activeTab, setActiveTab] = useState("menu");
+  const [notifications, setNotifications] = useState<{
+    messages: boolean;
+    reservations: boolean;
+    reviews: boolean;
+  }>({
+    messages: false,
+    reservations: false,
+    reviews: false,
+  });
 
   useEffect(() => {
     checkAuth();
     fetchNotifications();
+    
+    // Load notifications from localStorage
+    const savedNotifications = localStorage.getItem('admin_notifications');
+    if (savedNotifications) {
+      setNotifications(JSON.parse(savedNotifications));
+    }
 
-    // Rafraîchir les notifications toutes les 30 secondes
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
+    // Set up realtime subscriptions
+    const messagesChannel = supabase
+      .channel('contact_messages_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'contact_messages'
+        },
+        () => {
+          fetchNotifications();
+          setNotifications(prev => {
+            const updated = { ...prev, messages: true };
+            localStorage.setItem('admin_notifications', JSON.stringify(updated));
+            return updated;
+          });
+        }
+      )
+      .subscribe();
+
+    const reservationsChannel = supabase
+      .channel('reservations_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'reservations'
+        },
+        () => {
+          fetchNotifications();
+          setNotifications(prev => {
+            const updated = { ...prev, reservations: true };
+            localStorage.setItem('admin_notifications', JSON.stringify(updated));
+            return updated;
+          });
+        }
+      )
+      .subscribe();
+
+    const reviewsChannel = supabase
+      .channel('reviews_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'reviews'
+        },
+        () => {
+          fetchNotifications();
+          setNotifications(prev => {
+            const updated = { ...prev, reviews: true };
+            localStorage.setItem('admin_notifications', JSON.stringify(updated));
+            return updated;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(messagesChannel);
+      supabase.removeChannel(reservationsChannel);
+      supabase.removeChannel(reviewsChannel);
+    };
   }, []);
 
   const checkAuth = async () => {
@@ -65,8 +145,27 @@ const Admin = () => {
       .select("id", { count: "exact" })
       .eq("is_viewed", false);
     
+    const { data: reviews } = await supabase
+      .from("reviews")
+      .select("id", { count: "exact" })
+      .eq("is_confirmed", false);
+    
     setUnreadMessages(messages?.length || 0);
     setUnviewedReservations(reservations?.length || 0);
+    setNewReviews(reviews?.length || 0);
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    
+    // Clear notification for the clicked tab
+    if (value === "messages" || value === "reservations" || value === "reviews") {
+      setNotifications(prev => {
+        const updated = { ...prev, [value]: false };
+        localStorage.setItem('admin_notifications', JSON.stringify(updated));
+        return updated;
+      });
+    }
   };
 
   const handleLogout = async () => {
@@ -104,7 +203,7 @@ const Admin = () => {
       </nav>
 
       <div className="container mx-auto px-4 pt-24 pb-12">
-        <Tabs defaultValue="menu" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 max-w-6xl mx-auto mb-8">
             <TabsTrigger value="menu">
               <Menu className="h-4 w-4 mr-2" />
@@ -113,27 +212,53 @@ const Admin = () => {
             <TabsTrigger value="reservations" className="relative">
               <Users className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Réservations</span>
-              {unviewedReservations > 0 && (
-                <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
-                  {unviewedReservations}
-                </Badge>
+              {(unviewedReservations > 0 || notifications.reservations) && (
+                <>
+                  {notifications.reservations && (
+                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full animate-pulse" />
+                  )}
+                  {unviewedReservations > 0 && (
+                    <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
+                      {unviewedReservations}
+                    </Badge>
+                  )}
+                </>
               )}
             </TabsTrigger>
             <TabsTrigger value="gallery">
               <ImageIcon className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Galerie</span>
             </TabsTrigger>
-            <TabsTrigger value="reviews">
+            <TabsTrigger value="reviews" className="relative">
               <MessageSquare className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Avis</span>
+              {(newReviews > 0 || notifications.reviews) && (
+                <>
+                  {notifications.reviews && (
+                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full animate-pulse" />
+                  )}
+                  {newReviews > 0 && (
+                    <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
+                      {newReviews}
+                    </Badge>
+                  )}
+                </>
+              )}
             </TabsTrigger>
             <TabsTrigger value="messages" className="relative">
               <Mail className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Messages</span>
-              {unreadMessages > 0 && (
-                <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
-                  {unreadMessages}
-                </Badge>
+              {(unreadMessages > 0 || notifications.messages) && (
+                <>
+                  {notifications.messages && (
+                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full animate-pulse" />
+                  )}
+                  {unreadMessages > 0 && (
+                    <Badge className="ml-2 h-5 w-5 p-0 flex items-center justify-center" variant="destructive">
+                      {unreadMessages}
+                    </Badge>
+                  )}
+                </>
               )}
             </TabsTrigger>
             <TabsTrigger value="hours">
