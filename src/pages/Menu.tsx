@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import MenuItemDialog from "@/components/MenuItemDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -11,8 +13,10 @@ interface MenuItem {
   id: string;
   name: string;
   description: string | null;
+  detailed_description: string | null;
   price: number;
   category_id: string;
+  image_url: string | null;
 }
 
 interface Category {
@@ -25,6 +29,7 @@ const Menu = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
 
   useEffect(() => {
     fetchMenuData();
@@ -102,7 +107,11 @@ const Menu = () => {
                     </h2>
                     <div className="grid md:grid-cols-2 gap-6">
                       {items.map((item) => (
-                        <Card key={item.id} className="hover-scale">
+                        <Card 
+                          key={item.id} 
+                          className="hover-scale cursor-pointer transition-all hover:shadow-lg"
+                          onClick={() => setSelectedItem(item)}
+                        >
                           <CardHeader>
                             <div className="flex justify-between items-start">
                               <CardTitle className="text-xl">{item.name}</CardTitle>
@@ -133,6 +142,14 @@ const Menu = () => {
           </div>
         </div>
       </main>
+      
+      <Footer />
+      
+      <MenuItemDialog 
+        item={selectedItem}
+        open={!!selectedItem}
+        onClose={() => setSelectedItem(null)}
+      />
     </div>
   );
 };
