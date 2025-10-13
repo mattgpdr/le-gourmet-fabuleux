@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Trash2, Mail, MailOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ContactMessage {
   id: string;
@@ -87,68 +88,94 @@ const ContactMessagesTab = () => {
     return <div className="text-center py-8">Chargement...</div>;
   }
 
+  const unreadMessages = messages.filter(m => !m.is_read);
+  const readMessages = messages.filter(m => m.is_read);
+
+  const renderMessages = (messageList: ContactMessage[]) => {
+    if (messageList.length === 0) {
+      return (
+        <Card>
+          <CardContent className="py-8 text-center text-muted-foreground">
+            Aucun message
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return messageList.map((message) => (
+      <Card key={message.id} className={!message.is_read ? "border-primary" : ""}>
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Checkbox
+                  checked={message.is_read}
+                  onCheckedChange={() => handleToggleRead(message.id, message.is_read)}
+                />
+                {message.is_read ? (
+                  <MailOpen className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <Mail className="h-4 w-4 text-primary" />
+                )}
+                <CardTitle className="text-lg">{message.subject}</CardTitle>
+              </div>
+              <CardDescription>
+                De: {message.name} ({message.email})
+                {message.phone && ` - ${message.phone}`}
+                <br />
+                Le {new Date(message.created_at).toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </CardDescription>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleDelete(message.id)}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm whitespace-pre-wrap">{message.message}</p>
+        </CardContent>
+      </Card>
+    ));
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-serif font-bold">Messages de contact</h2>
         <span className="text-sm text-muted-foreground">
-          {messages.filter(m => !m.is_read).length} non lu(s)
+          {unreadMessages.length} non lu(s)
         </span>
       </div>
 
-      {messages.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
-            Aucun message reçu
-          </CardContent>
-        </Card>
-      ) : (
-        messages.map((message) => (
-          <Card key={message.id} className={!message.is_read ? "border-primary" : ""}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Checkbox
-                      checked={message.is_read}
-                      onCheckedChange={() => handleToggleRead(message.id, message.is_read)}
-                    />
-                    {message.is_read ? (
-                      <MailOpen className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Mail className="h-4 w-4 text-primary" />
-                    )}
-                    <CardTitle className="text-lg">{message.subject}</CardTitle>
-                  </div>
-                  <CardDescription>
-                    De: {message.name} ({message.email})
-                    {message.phone && ` - ${message.phone}`}
-                    <br />
-                    Le {new Date(message.created_at).toLocaleDateString("fr-FR", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </CardDescription>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(message.id)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm whitespace-pre-wrap">{message.message}</p>
-            </CardContent>
-          </Card>
-        ))
-      )}
+      <Tabs defaultValue="unread" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="unread">
+            Non lus ({unreadMessages.length})
+          </TabsTrigger>
+          <TabsTrigger value="read">
+            Lus ({readMessages.length})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="unread" className="space-y-4">
+          {renderMessages(unreadMessages)}
+        </TabsContent>
+
+        <TabsContent value="read" className="space-y-4">
+          {renderMessages(readMessages)}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
