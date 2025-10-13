@@ -48,12 +48,18 @@ const ReservationsTab = () => {
   };
 
   const handleToggleProcessed = async (id: string, currentStatus: boolean) => {
+    const updateData: { is_processed: boolean; is_viewed?: boolean } = { 
+      is_processed: !currentStatus
+    };
+    
+    // Only mark as viewed when moving to processed (not when going back to unprocessed)
+    if (!currentStatus) {
+      updateData.is_viewed = true;
+    }
+
     const { error } = await supabase
       .from("reservations")
-      .update({ 
-        is_processed: !currentStatus,
-        is_viewed: true 
-      })
+      .update(updateData)
       .eq("id", id);
 
     if (error) {
