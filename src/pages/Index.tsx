@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import GalleryCarousel from "@/components/GalleryCarousel";
 import MenuPreviewSection from "@/components/MenuPreviewSection";
-import MenuSection from "@/components/MenuSection";
 import OpeningHoursSection from "@/components/OpeningHoursSection";
 import ReservationSection from "@/components/ReservationSection";
 import ReviewsSection from "@/components/ReviewsSection";
@@ -18,7 +17,6 @@ const Index = () => {
         <Hero />
         <GalleryCarousel />
         <MenuPreviewSection />
-        <MenuSection />
         <OpeningHoursSection />
         <ReservationSection />
         <ReviewsSection />
