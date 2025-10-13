@@ -62,6 +62,30 @@ const OpeningHoursTab = () => {
     }
   };
 
+  const handleSaveTimes = async (hour: OpeningHour) => {
+    const { error } = await supabase
+      .from("opening_hours")
+      .update({ 
+        start_time: hour.start_time,
+        end_time: hour.end_time 
+      })
+      .eq("id", hour.id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de sauvegarder les horaires",
+      });
+    } else {
+      toast({
+        title: "Horaires sauvegardés",
+        description: "Les horaires ont été mis à jour",
+      });
+      fetchHours();
+    }
+  };
+
   if (loading) {
     return <div>Chargement...</div>;
   }
@@ -105,7 +129,7 @@ const OpeningHoursTab = () => {
                         onChange={(e) => {
                           const newHours = [...hours];
                           const index = newHours.findIndex(h => h.id === hour.id);
-                          newHours[index].start_time = e.target.value;
+                          newHours[index].start_time = e.target.value + ":00";
                           setHours(newHours);
                         }}
                         className="w-32"
@@ -120,7 +144,7 @@ const OpeningHoursTab = () => {
                         onChange={(e) => {
                           const newHours = [...hours];
                           const index = newHours.findIndex(h => h.id === hour.id);
-                          newHours[index].end_time = e.target.value;
+                          newHours[index].end_time = e.target.value + ":00";
                           setHours(newHours);
                         }}
                         className="w-32"
@@ -129,13 +153,10 @@ const OpeningHoursTab = () => {
 
                     <Button
                       size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        handleUpdate(hour.id, "start_time", hour.start_time);
-                        handleUpdate(hour.id, "end_time", hour.end_time);
-                      }}
+                      onClick={() => handleSaveTimes(hour)}
                     >
-                      <Save className="h-4 w-4" />
+                      <Save className="h-4 w-4 mr-2" />
+                      Sauvegarder
                     </Button>
                   </>
                 )}
