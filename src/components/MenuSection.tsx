@@ -60,7 +60,7 @@ const MenuSection = () => {
   }
 
   return (
-    <section id="menu" ref={ref} className={`py-20 px-4 bg-muted/30 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+    <section id="menu" ref={ref} className={`py-20 px-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="container mx-auto max-w-5xl">
         <h2 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4 text-primary">
           Nos Menus
