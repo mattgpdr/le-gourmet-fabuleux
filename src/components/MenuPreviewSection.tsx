@@ -36,8 +36,8 @@ const MenuPreviewSection = () => {
     >
       <div className="container mx-auto max-w-4xl text-center">
         <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-elegant group">
-          <CardContent className="p-8 md:p-10">
-            <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 mb-4 md:mb-6 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+          <CardContent className="p-6 md:p-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 mb-3 md:mb-4 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
               {logoUrl ? (
                 <img 
                   src={logoUrl} 
@@ -49,11 +49,11 @@ const MenuPreviewSection = () => {
               )}
             </div>
             
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4 md:mb-6 text-primary transition-all duration-300 group-hover:scale-105">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-3 md:mb-4 text-primary transition-all duration-300 group-hover:scale-105">
               Notre Carte
             </h2>
             
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
+            <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6 max-w-2xl mx-auto leading-relaxed px-2">
               Découvrez notre cuisine française raffinée, élaborée avec des produits frais et de saison. 
               Une carte généreuse qui célèbre les saveurs authentiques et les traditions gastronomiques parisiennes.
             </p>
