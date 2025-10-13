@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { z } from "zod";
 
 const Reservation = () => {
   const navigate = useNavigate();
@@ -29,13 +30,48 @@ const Reservation = () => {
     "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"
   ];
 
+  const reservationSchema = z.object({
+    customerName: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères").max(100, "Le nom ne peut pas dépasser 100 caractères"),
+    customerEmail: z.string().trim().email("Email invalide").max(255, "L'email ne peut pas dépasser 255 caractères"),
+    customerPhone: z.string().trim().max(20, "Le téléphone ne peut pas dépasser 20 caractères").optional().or(z.literal("")),
+    numberOfGuests: z.number().int().min(1, "Minimum 1 personne").max(20, "Maximum 20 personnes"),
+    message: z.string().trim().max(1000, "Le message ne peut pas dépasser 1000 caractères").optional().or(z.literal(""))
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!date || !selectedTime || !customerName || !customerEmail) {
+    if (!date || !selectedTime) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Veuillez sélectionner une date et une heure",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const validationResult = reservationSchema.safeParse({
+        customerName,
+        customerEmail,
+        customerPhone,
+        numberOfGuests,
+        message
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(err => err.message).join(", ");
+        toast({
+          title: "Erreur de validation",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez vérifier vos informations",
         variant: "destructive",
       });
       return;

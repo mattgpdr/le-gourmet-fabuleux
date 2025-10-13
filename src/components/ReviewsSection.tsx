@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 
 interface Review {
   id: string;
@@ -37,13 +38,35 @@ const ReviewsSection = () => {
     if (data) setReviews(data);
   };
 
+  const reviewSchema = z.object({
+    authorName: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères").max(100, "Le nom ne peut pas dépasser 100 caractères"),
+    comment: z.string().trim().min(10, "L'avis doit contenir au moins 10 caractères").max(1000, "L'avis ne peut pas dépasser 1000 caractères"),
+    rating: z.number().int().min(1).max(5)
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!authorName.trim() || !comment.trim()) {
+    try {
+      const validationResult = reviewSchema.safeParse({
+        authorName,
+        comment,
+        rating
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.errors.map(err => err.message).join(", ");
+        toast({
+          title: "Erreur de validation",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs",
+        description: "Veuillez vérifier vos informations",
         variant: "destructive",
       });
       return;
