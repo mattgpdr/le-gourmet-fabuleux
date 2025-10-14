@@ -118,14 +118,10 @@ const Admin = () => {
       return;
     }
 
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", session.user.id);
+    // Use server-side function to securely verify admin status
+    const { data: hasAdminRole, error } = await supabase.rpc("is_admin");
 
-    const hasAdminRole = roles?.some((r) => r.role === "admin");
-    
-    if (!hasAdminRole) {
+    if (error || !hasAdminRole) {
       navigate("/");
       return;
     }
