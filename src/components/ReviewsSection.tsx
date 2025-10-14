@@ -8,6 +8,14 @@ import { Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { z } from "zod";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 interface Review {
   id: string;
@@ -112,35 +120,49 @@ const ReviewsSection = () => {
           Découvrez ce que nos clients pensent de nous
         </p>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-10 md:mb-16">
-          {reviews.map((review) => (
-            <Card 
-              key={review.id}
-              className="hover:shadow-elegant transition-all duration-300"
-            >
-              <CardContent className="p-4 md:p-6">
-                <div className="flex gap-1 mb-2 md:mb-3">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 md:h-5 md:w-5 ${
-                        i < review.rating
-                          ? "fill-secondary text-secondary"
-                          : "text-muted"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4 italic">
-                  "{review.comment}"
-                </p>
-                <p className="text-sm md:text-base font-semibold text-foreground">
-                  — {review.author_name}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          plugins={[
+            Autoplay({
+              delay: 4000,
+            }),
+          ]}
+          className="w-full max-w-5xl mx-auto mb-10 md:mb-16"
+        >
+          <CarouselContent>
+            {reviews.map((review) => (
+              <CarouselItem key={review.id} className="md:basis-1/2 lg:basis-1/3">
+                <Card className="hover:shadow-elegant transition-all duration-300 h-full">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="flex gap-1 mb-2 md:mb-3">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 md:h-5 md:w-5 ${
+                            i < review.rating
+                              ? "fill-secondary text-secondary"
+                              : "text-muted"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4 italic">
+                      "{review.comment}"
+                    </p>
+                    <p className="text-sm md:text-base font-semibold text-foreground">
+                      — {review.author_name}
+                    </p>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex" />
+          <CarouselNext className="hidden md:flex" />
+        </Carousel>
 
         <Card className="max-w-2xl mx-auto shadow-elegant">
           <CardContent className="p-4 md:p-8">
