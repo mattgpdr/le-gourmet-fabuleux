@@ -12,6 +12,7 @@ const SiteSettingsTab = () => {
   const [settings, setSettings] = useState({
     hero_image_url: "",
     logo_url: "",
+    background_image_url: "",
     instagram_url: "",
     facebook_url: "",
     phone: "",
@@ -222,6 +223,43 @@ const SiteSettingsTab = () => {
                 className="flex-1"
               />
               <Button disabled={uploading === "logo_url"} size="icon" variant="outline">
+                <Upload className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Image d'arrière-plan</CardTitle>
+          <CardDescription>
+            Cette image apparaît en arrière-plan de tout le site avec une transparence
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {settings.background_image_url && (
+            <div className="relative aspect-video w-full max-w-2xl overflow-hidden rounded-lg border">
+              <img
+                src={settings.background_image_url}
+                alt="Background"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="background-upload">Changer l'arrière-plan</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="background-upload"
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, "background_image_url")}
+                disabled={uploading === "background_image_url"}
+                className="flex-1"
+              />
+              <Button disabled={uploading === "background_image_url"} size="icon" variant="outline">
                 <Upload className="h-4 w-4" />
               </Button>
             </div>
