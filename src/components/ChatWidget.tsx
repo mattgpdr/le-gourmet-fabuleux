@@ -52,7 +52,7 @@ const ChatWidget = () => {
       {/* Mini fenêtre de chat */}
       {isOpen && (
         <Card className="fixed bottom-28 right-6 w-80 md:w-96 shadow-elegant z-50 animate-scale-in">
-          <div className="bg-primary text-primary-foreground p-4 rounded-t-lg">
+          <div className="bg-primary text-white p-4 rounded-t-lg">
             <h3 className="font-serif text-lg font-bold">
               Questions fréquentes
             </h3>
