@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import heroImageDefault from "@/assets/hero-restaurant.jpg";
 
 const Hero = () => {
   const { ref, isVisible } = useScrollAnimation();
   const [scrollY, setScrollY] = useState(0);
-  const [heroImage, setHeroImage] = useState(heroImageDefault);
-  const [heroTitle, setHeroTitle] = useState("Le Gourmet Parisien");
-  const [heroDescription, setHeroDescription] = useState("Une expérience culinaire authentique au cœur de Paris");
+  const [heroImage, setHeroImage] = useState("");
+  const [heroTitle, setHeroTitle] = useState("");
+  const [heroDescription, setHeroDescription] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +34,7 @@ const Hero = () => {
         return acc;
       }, {} as Record<string, string>);
       
-      if (settingsMap.hero_image_url?.startsWith("http")) {
+      if (settingsMap.hero_image_url) {
         setHeroImage(settingsMap.hero_image_url);
       }
       if (settingsMap.hero_title) {

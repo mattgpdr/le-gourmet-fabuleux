@@ -147,13 +147,23 @@ export const useLogoColor = () => {
             `${hsl.h} ${hsl.s}% ${hsl.l}%`
           );
           
-          // Always use white text for primary buttons
+          // Always use black text for primary buttons
           document.documentElement.style.setProperty(
             "--primary-foreground",
-            `0 0% 100%`
+            `0 0% 0%`
           );
           
           console.log(`Primary color updated to: hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`);
+        } else {
+          // No logo or no dominant color - set to white
+          document.documentElement.style.setProperty(
+            "--primary",
+            `0 0% 100%`
+          );
+          document.documentElement.style.setProperty(
+            "--primary-foreground",
+            `0 0% 0%`
+          );
         }
       } catch (error) {
         console.error("Error updating primary color:", error);

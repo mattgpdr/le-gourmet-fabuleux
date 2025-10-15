@@ -10,7 +10,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [logoUrl, setLogoUrl] = useState<string>("");
-  const [navbarTitle, setNavbarTitle] = useState("Le Gourmet Parisien");
+  const [navbarTitle, setNavbarTitle] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
