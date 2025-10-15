@@ -3,36 +3,45 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const useBackgroundImage = () => {
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string>("");
+  const [backgroundOpacity, setBackgroundOpacity] = useState<number>(90);
 
   useEffect(() => {
-    const fetchBackgroundImage = async () => {
+    const fetchBackgroundSettings = async () => {
       const { data } = await supabase
         .from("site_settings")
-        .select("value")
-        .eq("key", "background_image_url")
-        .single();
+        .select("key, value")
+        .in("key", ["background_image_url", "background_opacity"]);
 
-      if (data?.value) {
-        setBackgroundImageUrl(data.value);
+      if (data) {
+        const imageUrl = data.find(s => s.key === "background_image_url")?.value || "";
+        const opacity = data.find(s => s.key === "background_opacity")?.value || "90";
+        
+        setBackgroundImageUrl(imageUrl);
+        setBackgroundOpacity(parseInt(opacity));
       }
     };
 
-    fetchBackgroundImage();
+    fetchBackgroundSettings();
 
     // Subscribe to changes
     const channel = supabase
-      .channel("background_image_changes")
+      .channel("background_settings_changes")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
           table: "site_settings",
-          filter: "key=eq.background_image_url",
+          filter: "key=in.(background_image_url,background_opacity)",
         },
         (payload) => {
-          if (payload.new && "value" in payload.new) {
-            setBackgroundImageUrl(payload.new.value as string);
+          if (payload.new && "value" in payload.new && "key" in payload.new) {
+            const newRecord = payload.new as { key: string; value: string };
+            if (newRecord.key === "background_image_url") {
+              setBackgroundImageUrl(newRecord.value);
+            } else if (newRecord.key === "background_opacity") {
+              setBackgroundOpacity(parseInt(newRecord.value));
+            }
           }
         }
       )
@@ -43,5 +52,5 @@ export const useBackgroundImage = () => {
     };
   }, []);
 
-  return backgroundImageUrl;
+  return { backgroundImageUrl, backgroundOpacity };
 };

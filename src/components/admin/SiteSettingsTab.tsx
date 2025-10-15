@@ -6,13 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Save } from "lucide-react";
+import { Upload, Save, Trash2 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 const SiteSettingsTab = () => {
   const [settings, setSettings] = useState({
     hero_image_url: "",
     logo_url: "",
     background_image_url: "",
+    background_opacity: "90",
     instagram_url: "",
     facebook_url: "",
     phone: "",
@@ -262,7 +264,46 @@ const SiteSettingsTab = () => {
               <Button disabled={uploading === "background_image_url"} size="icon" variant="outline">
                 <Upload className="h-4 w-4" />
               </Button>
+              {settings.background_image_url && (
+                <Button 
+                  onClick={async () => {
+                    await handleSaveSetting("background_image_url", "");
+                    setSettings(prev => ({ ...prev, background_image_url: "" }));
+                  }}
+                  size="icon" 
+                  variant="destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="background-opacity">
+              Opacité de l'overlay ({settings.background_opacity}%)
+            </Label>
+            <div className="flex items-center gap-4">
+              <Slider
+                id="background-opacity"
+                value={[parseInt(settings.background_opacity)]}
+                onValueChange={(value) => setSettings(prev => ({ ...prev, background_opacity: value[0].toString() }))}
+                min={0}
+                max={100}
+                step={5}
+                className="flex-1"
+              />
+              <Button 
+                onClick={() => handleSaveSetting("background_opacity", settings.background_opacity)}
+                size="icon"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Ajustez la transparence de l'overlay sur l'image d'arrière-plan
+            </p>
           </div>
         </CardContent>
       </Card>

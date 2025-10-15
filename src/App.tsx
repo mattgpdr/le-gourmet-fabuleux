@@ -16,7 +16,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useLogoColor();
-  const backgroundImageUrl = useBackgroundImage();
+  const { backgroundImageUrl, backgroundOpacity } = useBackgroundImage();
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -28,7 +28,10 @@ const App = () => {
                 className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(${backgroundImageUrl})` }}
               />
-              <div className="fixed inset-0 z-0 bg-background/90 dark:bg-background/85" />
+              <div 
+                className="fixed inset-0 z-0 bg-background dark:bg-background" 
+                style={{ opacity: backgroundOpacity / 100 }}
+              />
             </>
           )}
           <div className="relative z-10">
