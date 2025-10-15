@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface MenuItem {
   id: string;
@@ -81,22 +82,30 @@ const Menu = () => {
             </p>
           </div>
 
-          {/* Menu Items by Category */}
+          {/* Menu Items by Category with Tabs */}
           {loading ? (
             <div className="space-y-8">
               {[1, 2, 3].map((i) => (
                 <div key={i}>
                   <Skeleton className="h-8 w-48 mb-4" />
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {[1, 2].map((j) => (
-                      <Skeleton key={j} className="h-32" />
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[1, 2, 3].map((j) => (
+                      <Skeleton key={j} className="h-64" />
                     ))}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="space-y-8 md:space-y-12">
+            <Tabs defaultValue={categories[0]?.id} className="w-full">
+              <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
+                {categories.map((category) => (
+                  <TabsTrigger key={category.id} value={category.id}>
+                    {category.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              
               {categories.map((category) => {
                 const items = menuItems.filter(
                   (item) => item.category_id === category.id
@@ -105,35 +114,50 @@ const Menu = () => {
                 if (items.length === 0) return null;
 
                 return (
-                  <div key={category.id}>
-                    <h2 className="font-serif text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-primary">
-                      {category.name}
-                    </h2>
-                    <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
+                  <TabsContent key={category.id} value={category.id} className="mt-6">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                       {items.map((item) => (
                         <Card 
                           key={item.id} 
-                          className="hover-scale cursor-pointer transition-all hover:shadow-lg active:scale-95"
+                          className="overflow-hidden hover-scale cursor-pointer transition-all hover:shadow-lg active:scale-95 group"
                           onClick={() => setSelectedItem(item)}
                         >
-                          <CardHeader className="p-4 md:p-6">
+                          {item.image_url && (
+                            <div className="relative aspect-[4/3] overflow-hidden">
+                              <img
+                                src={item.image_url}
+                                alt={item.name}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                              />
+                              <div className="absolute top-3 right-3 bg-background/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
+                                <span className="text-primary font-bold text-lg">
+                                  {item.price.toFixed(2)} €
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                          <CardHeader className="p-4">
                             <div className="flex justify-between items-start gap-2">
-                              <CardTitle className="text-base md:text-xl">{item.name}</CardTitle>
-                              <span className="text-primary font-bold text-base md:text-lg flex-shrink-0">
-                                {item.price.toFixed(2)} €
-                              </span>
+                              <CardTitle className="text-lg leading-tight">{item.name}</CardTitle>
+                              {!item.image_url && (
+                                <span className="text-primary font-bold text-lg flex-shrink-0">
+                                  {item.price.toFixed(2)} €
+                                </span>
+                              )}
                             </div>
                             {item.description && (
-                              <CardDescription className="text-xs md:text-sm">{item.description}</CardDescription>
+                              <CardDescription className="text-sm mt-2 line-clamp-2">
+                                {item.description}
+                              </CardDescription>
                             )}
                           </CardHeader>
                         </Card>
                       ))}
                     </div>
-                  </div>
+                  </TabsContent>
                 );
               })}
-            </div>
+            </Tabs>
           )}
 
           {/* CTA Réserver */}
